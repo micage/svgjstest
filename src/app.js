@@ -62,7 +62,7 @@ const drawScene = (k) => {
     g1.clear();
     g1.circle(k + 10).move(-(k + 10)/2, -(k + 10)/2).fill('none').stroke({ width: 0.1, color: "#eee" })
 
-    g1.text("Hallo Du da.").move(0,0);
+    svg.text("Hallo Du da.").move(0,0).scale(0.2).fill("aaa");
 
     DrawVector(a, 0, "red");
     DrawVector(b, 0, "lightgreen");
