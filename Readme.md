@@ -17,15 +17,15 @@ npm i
 Then type one of the following ...
 
 #### Vector2 Test
+Starts devserver on port 3014 -> localhost:3014
 ```
-// start dev server on port 3014
 npm run vector2
 ```
 
 #### Tree Replication Test
 This has no GUI, only devtools console output
+Starts devserver on port 3015 -> localhost:3015
 ```
-// start dev server on port 3015
 npm run tree
 ```
 
