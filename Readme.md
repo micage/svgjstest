@@ -16,22 +16,17 @@ npm i
 
 Then type one of the following ...
 
-#### Sample 1
+#### Vector2 Test
 ```
-// start dev server on port 3010
-npm run dev
-
-// for production build:
-npm run pro
+// start dev server on port 3014
+npm run vector2
 ```
 
-#### Sample 2
+#### Tree Replication Test
+This has no GUI, only devtools console output
 ```
-// start dev server on port 3012
-npm run dev2
-
-// for production build:
-npm run pro2
+// start dev server on port 3015
+npm run tree
 ```
 
 ### Caution and disclaimer

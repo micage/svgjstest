@@ -6,8 +6,8 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "webpack-dev-server --config webpack-dev.config.js --progress --colors",
-    "dev": "webpack-dev-server --config webpack-dev.config.js --progress --colors"
+    "vector2": "webpack-dev-server --config webpack-dev.config.js --progress --colors",
+    "tree": "webpack-dev-server --config webpack-dev2.config.js --progress --colors"
   },
   "author": "",
   "license": "ISC",

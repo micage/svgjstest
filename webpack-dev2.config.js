@@ -7,7 +7,7 @@ process.env.DEBUG = true;
 
 module.exports = {
     entry: [
-        './app.js'
+        './app2.js'
     ],
     context: path.join(__dirname, 'src'),
     devServer: {
@@ -17,7 +17,7 @@ module.exports = {
         hotOnly: true,
         inline: true,
         // noInfo: true,
-        port: 3014, // Port Number
+        port: 3015, // Port Number
     },
     devtool: 'source-map',
     output: {
