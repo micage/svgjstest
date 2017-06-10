@@ -1,5 +1,5 @@
 ### What is it?
-Tiny tests for a Vector2 class and a tree replication function.
+Two things. First a test run for a Vector2 class using svg.js and second a tree replication function.
 
 ### Installing
 Go to a directory of your choice
