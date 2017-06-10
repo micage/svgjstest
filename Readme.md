@@ -17,13 +17,15 @@ npm i
 Then type one of the following ...
 
 #### Vector2 Test
+Vector2 class that implements operations you can do with a pair of numbers. ES6 code.
+Uses [svg.js](https://github.com/svgdotjs/svg.js) for displaying the vectors.
 Starts devserver on port 3014 -> localhost:3014
 ```
 npm run vector2
 ```
 
 #### Tree Replication Test
-This has no GUI, only devtools console output
+This has no GUI, only devtools console output.
 Starts devserver on port 3015 -> localhost:3015
 ```
 npm run tree
