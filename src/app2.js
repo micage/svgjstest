@@ -7,29 +7,6 @@ let NodePrinter = node => {
     console.log(tabs + node.id);
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let test2 = {
     name: "Heinz",
     age: 42,
