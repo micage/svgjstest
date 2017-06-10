@@ -1,5 +1,5 @@
 ### What is it?
-Two things. First a test run for a Vector2 class using svg.js and second a tree replication function.
+Two things. First a test run for a Vector2 class using svg.js for displaying vectors as [SVGLineElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGLineElement)s and second a tree replication function.
 
 ### Installing
 Go to a directory of your choice
@@ -18,7 +18,7 @@ Then type one of the following ...
 
 #### Vector2 Test
 Vector2 class that implements operations you can do with a pair of numbers. ES6 code.
-Uses [svg.js](https://github.com/svgdotjs/svg.js) for displaying the vectors.
+Uses [svg.js](https://github.com/svgdotjs/svg.js) for displaying the vectors. Arranged in a MVC-Pattern by using my [DOM-Ponents](https://github.com/micage/DOM-Ponents) library.
 Starts devserver on port 3014 -> localhost:3014
 ```
 npm run vector2

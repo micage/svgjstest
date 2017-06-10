@@ -7,7 +7,7 @@ import SVG from "svg.js";
 // ======================================================================
 // test svg.js
 let obs = {
-    k1: new Obs.ObservableRangedValue(0, -10, 10),
+    k1: new Obs.ObservableRangedValue(undefined, -10, 10),
 }
 obs.k1.addListener(function() {
     drawScene(this.value)
