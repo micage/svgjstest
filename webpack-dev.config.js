@@ -34,7 +34,7 @@ module.exports = {
 
         new webpack.NamedModulesPlugin(),
         
-        new HtmlWebpackPlugin({ title: 'My App' }),
+        new HtmlWebpackPlugin({ title: 'Vector2 Test' }),
 
         // Allows error warnings but does not stop compiling.
         // new webpack.NoEmitOnErrorsPlugin(),

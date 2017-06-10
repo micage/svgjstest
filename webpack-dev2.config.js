@@ -34,7 +34,7 @@ module.exports = {
 
         new webpack.NamedModulesPlugin(),
         
-        new HtmlWebpackPlugin({ title: 'My App' }),
+        new HtmlWebpackPlugin({ title: 'Tree Replication Test' }),
 
         // Allows error warnings but does not stop compiling.
         // new webpack.NoEmitOnErrorsPlugin(),
