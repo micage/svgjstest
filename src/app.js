@@ -15,12 +15,14 @@ obs.k1.addListener(function() {
 
 DOM.App(
     DOM.Div({
+        style: { font: "12pt sans-serif" },
         children: [
             DOM.Div({
                 id: "scene", style: {
                     "height": "400px"
                 }
             }),
+            DOM.Span({ innerText: "Vector2 Test - scroll and watch!" }),
             ScrollBar({
                 style: { width: "300px", height: "20px", border: "1px solid #ddd" },
                 listenTo: {
@@ -28,20 +30,13 @@ DOM.App(
                         obs.k1.setFromRatio(ev.detail);
                     }
                 }
-            })
-        ],
-        listenTo: {
-            mgMount: () => {
-                obs.k1.value = 7;
-            }
-        }
+            }),
+        ]
     })
 );
 
-var svg = SVG('scene');
-svg.viewbox(0, 0, 50, 30);
-var g1 = svg.group();
-g1.move(20, 15).scale(1, -1);
+var svg = SVG('scene').viewbox(0, 0, 50, 30);
+var g1 = svg.group().move(20, 15).scale(1, -1);
 
 const DrawVector = (v, from, color) => {
     let l = g1.line(0, 0, v.x, v.y);
@@ -52,6 +47,7 @@ const DrawVector = (v, from, color) => {
     return l;
 }
 
+let text = svg.text("SVG Rocks!").scale(.075).y(-150).font({ size: 24, fill: "#bbb" });
 
 const drawScene = (k) => {
     let a = new Vector2(2 * k, 3);
@@ -59,10 +55,10 @@ const drawScene = (k) => {
     let c = a.dot(b);
     let d = (new Vector2(10,0)).rotate(-k*18, true);
 
+
     g1.clear();
     g1.circle(k + 10).move(-(k + 10)/2, -(k + 10)/2).fill('none').stroke({ width: 0.1, color: "#eee" })
-
-    svg.text("Hallo Du da.").move(0,0).scale(0.2).fill("aaa");
+    text.x(30*k-300);
 
     DrawVector(a, 0, "red");
     DrawVector(b, 0, "lightgreen");
@@ -82,7 +78,9 @@ const drawScene = (k) => {
 
 
 // ======================================================================
-
 if (module.hot) {
-    module.hot.accept();
+    module.hot.accept('./app.js', function() {
+        console.log('fff');
+        
+    });
 }
