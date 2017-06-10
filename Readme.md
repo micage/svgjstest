@@ -32,7 +32,7 @@ information a copy of the original object is created.
 
 This is the basis for a lot of tree gernerating/transforming algorithms.
 It proofs that the structure of a tree can be serialized as a sequence of
-two flags and the node related data and deserialized from this sequence.
+two flags and the node related data and be deserialized later from this sequence.
 ```
 let node = {
     id: "some id",
