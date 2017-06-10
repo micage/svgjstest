@@ -1,16 +1,24 @@
 import Vector2 from "./Math/Vector2";
 import * as DOM from "./DOM/Elements";
+import * as Evt from "./DOM/Events";
 import ScrollBar from "./DOM/ScrollBar";
 import * as Obs from "./Structures/Observable";
 import SVG from "svg.js";
 
 // ======================================================================
 // test svg.js
+let views = {
+    scrollBar: null
+};
+
+// observables
 let obs = {
     k1: new Obs.ObservableRangedValue(undefined, -10, 10),
-}
+};
+
 obs.k1.addListener(function() {
-    drawScene(this.value)
+    drawScene(this.value);
+    Evt.trigger(views.scrollBar, "mgRatioDo", this.getRatio());
 });
 
 DOM.App(
@@ -23,7 +31,7 @@ DOM.App(
                 }
             }),
             DOM.Span({ innerText: "Vector2 Test - scroll and watch!" }),
-            ScrollBar({
+            views.scrollBar = ScrollBar({
                 style: { width: "300px", height: "20px", border: "1px solid #ddd" },
                 listenTo: {
                     mgRatio: (ev) => {
@@ -31,8 +39,11 @@ DOM.App(
                     }
                 }
             }),
-        ]
-    })
+        ],
+        listenTo: {
+            mgMount: () => { obs.k1.value = -2 }
+        }
+    }),
 );
 
 var svg = SVG('scene').viewbox(0, 0, 50, 30);
