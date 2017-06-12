@@ -7,7 +7,7 @@ process.env.DEBUG = true;
 
 module.exports = {
     entry: [
-        './app.js'
+        './main.js'
     ],
     context: path.join(__dirname, 'src'),
     devServer: {

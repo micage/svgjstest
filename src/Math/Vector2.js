@@ -38,7 +38,7 @@ class Vector2 {
     }
 
     /** @param {number} w - angle */
-    /** @param {number} deg - if true units of w are degree, else radians */
+    /** @param {boolean} deg - if true units of w are degree, else radians */
     /** @return {Vector2} - this rotated by angle w */
     rotate(w, deg) {
         if (deg === true) {

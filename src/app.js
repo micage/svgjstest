@@ -8,7 +8,9 @@ import SVG from "svg.js";
 // ======================================================================
 // test svg.js
 let views = {
-    scrollBar: null
+    scrollBar: null,
+    svg: null,
+    g1: null
 };
 
 // observables
@@ -21,8 +23,15 @@ obs.k1.addListener(function() {
     Evt.trigger(views.scrollBar, "mgRatioDo", this.getRatio());
 });
 
-DOM.App(
-    DOM.Div({
+const textStyle = {
+    "user-select": "none",
+    "cursor": "default"
+};
+
+export default
+function CreateApp() {
+    return DOM.Div({
+        id: "app",
         style: { font: "12pt sans-serif" },
         children: [
             DOM.Div({
@@ -30,46 +39,61 @@ DOM.App(
                     "height": "400px"
                 }
             }),
-            DOM.Span({ innerText: "Vector2 Test - scroll and watch!" }),
+            DOM.Span({ innerText: "Vector2 Test - scroll and watch! Guess what's going on?", style: textStyle }),
             views.scrollBar = ScrollBar({
-                style: { width: "300px", height: "20px", border: "1px solid #ddd" },
+                style: {
+                    "width": "400px", 
+                    "height": "20px", 
+                    "border": "1px solid #ddd",
+                    "margin": "8px 0 4px"
+                },
                 listenTo: {
                     mgRatio: (ev) => {
                         obs.k1.setFromRatio(ev.detail);
                     }
                 }
             }),
+            DOM.Span({
+                innerText: "Green is const. Red is changing x. All others depend on Red and Green or the slider value",
+                style: Object.assign({
+                    "color": "#aaa",
+                    "font-size": "10pt",
+                }, textStyle)
+            }),            
         ],
         listenTo: {
-            mgMount: () => { obs.k1.value = -2 }
+            mgMount: OnAppMounted
         }
-    }),
-);
+    });
+}
 
-var svg = SVG('scene').viewbox(0, 0, 50, 30);
-var g1 = svg.group().move(20, 15).scale(1, -1);
+function OnAppMounted() {
+    views.svg = SVG('scene').viewbox(0, 0, 50, 30);
+    views.g1 = views.svg.group().move(20, 15).scale(1, -1);
+    obs.k1.value = -2;
+}
+
 
 const DrawVector = (v, from, color) => {
-    let l = g1.line(0, 0, v.x, v.y);
+    let l = views.g1.line(0, 0, v.x, v.y);
     if (from) {
         l.dmove(from.x, from.y);
     }
-    l.stroke({ width: 0.1, color });
+    l.stroke({ width: 0.15, color });
     return l;
 }
 
-let text = svg.text("SVG Rocks!").scale(.075).y(-150).font({ size: 24, fill: "#bbb" });
+//let text = views.svg.text("SVG Rocks!").scale(.075).y(-150).font({ size: 24, fill: "#bbb" });
 
 const drawScene = (k) => {
     let a = new Vector2(2 * k, 3);
     let b = new Vector2(5, 13);
     let c = a.dot(b);
-    let d = (new Vector2(10,0)).rotate(-k*18, true);
+    let d = (new Vector2(10, 0)).rotate(-(k + 10) * 18, true);
 
-
-    g1.clear();
-    g1.circle(k + 10).move(-(k + 10)/2, -(k + 10)/2).fill('none').stroke({ width: 0.1, color: "#eee" })
-    text.x(30*k-300);
+    views.g1.clear();
+    views.g1.circle(k + 10).move(-(k + 10)/2, -(k + 10)/2).fill('none').stroke({ width: 0.1, color: "#eee" })
+    //text.x(30*k-300);
 
     DrawVector(a, 0, "red");
     DrawVector(b, 0, "lightgreen");
@@ -78,20 +102,17 @@ const drawScene = (k) => {
     DrawVector(a.split(b).perp.inv, a, "cornflowerblue");
 
     let amb = a.mirror(b)
-    DrawVector(amb, 0, "#777");
+    DrawVector(amb, 0, "#baa");
 
     DrawVector(amb.split(b).coll, 0, "#f6f");
     DrawVector(amb.split(b).perp.inv, amb, "cornflowerblue");
     
-    DrawVector(d, 0, "tomato");
+    DrawVector(d, 0, "orange");
 };
 
 
 
 // ======================================================================
-if (module.hot) {
-    module.hot.accept('./app.js', function() {
-        console.log('fff');
-        
-    });
-}
+// if (module.hot) {
+//     module.hot.accept();
+// }

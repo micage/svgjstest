@@ -29,17 +29,19 @@ class ObjectTree {
 
             let key = keys[i];
             var child = obj[key];
-            // node.hasChildren = true;
-            node.hasChildren = !!Object.keys(child).length;
-            node.numChildren = Object.keys(child).length;
+            
+            if (child === null || child === undefined) {
+                node.numChildren = 0;
+            } else {
+                node.numChildren = Object.keys(child).length;
+            }
+            node.hasChildren = !!node.numChildren;
 
             if (Array.isArray(child)) {
                 node.id = key + "[" + child.length + "]";
             }
             else if (child && typeof child === "object") {
                 node.id = key;
-                // node.hasChildren = !!Object.keys(child).length;
-                // node.numChildren = Object.keys(child).length;
             }
             else {
                 node.hasChildren = false;

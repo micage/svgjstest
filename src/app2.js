@@ -4,7 +4,7 @@ import ObjectTree from "./Structures/ObjectTree";
 let NodePrinter = node => {
     let tabs = Array.from({length: node.depth}, () => "+--").join("");
     if (node.id === "i_11") return false; // stops traversal if condition fits
-    console.log(tabs + node.id);
+    console.log(tabs + node.id + (node.hasChildren ? "" : ": " + node.data));
 };
 
 let test2 = {
@@ -16,62 +16,122 @@ let test2 = {
     },
     i1: {
         i11: {
-            i111: {
+            i111: "Vogel",
+            i112: {
                 x: 0, 
                 y: 0, 
                 w: 400
             },
-            i112: "Vogel"
         },
-        i12: "i12"
+        i12: {
+            i121: "i121 data"
+        }
     },
-    i2: "i2",
-    i3: "i3"
+    i2: "i2 data",
+    i3: "i3 data"
 };
 
 
-
-function CreateTree(kick) {
+export default
+function ReplicateTree(args) {
     var objTreeTest2 = new ObjectTree(test2);
 
-    var root = { id: "root" };
-    var ancestors = [root];
-
-    function createNode(node) {
-        let curParent = ancestors[ancestors.length-1];
-
-        if(node.id === kick) {
-            // kick it!
-        }
-
-        // attach node to parent
-        curParent[node.id] = node.data;
-
-        if (node.hasChildren) {
-            ancestors.push(node);
-        }
-
-        if (!node.hasChildren && node.isLastChild){
-            while (ancestors.length > 1 && (ancestors.pop()).isLastChild) {}
-        }
-
-
-        console.log(node.id);
+    if (__DEBUG__) {
+        console.log("\n\nOriginal Tree: ")
+        objTreeTest2.traverse(NodePrinter); // original tree
     }
 
-    objTreeTest2.traverse(createNode);
+    var root = {}; // of new tree
+    var ancestors = [{ node:root, isLast: true }];
+    var skipAncestors = [];
+    var skipMode = false;
+
+    /**
+     * @param {Object} node - dep1 node
+     * @return {Object} - dep2 node
+     */
+    function createNode(parent, node) {
+        // 'parent' is just an object here, so we just add a key and set its value.
+        // This has not always to be the case.
+        // 'parent' could also be any arbitrary class that is able to 
+        // create and add a child node.
+
+        parent[node.id] = node.hasChildren ? {} : node.data
+        
+        return parent[node.id];
+    }
+
+    function skipNode(node) {
+
+        console.log(node.id + ': ' + node.data + ' -> omitted');
+
+        if (node.hasChildren) {
+            skipAncestors.push(node);
+        }
+        else if (node.isLastChild) {
+            while (skipAncestors.length && (skipAncestors.pop()).isLastChild) {}
+            while (ancestors.length > 1 && (ancestors.pop()).isLast) {}
+        }
+        if (!skipAncestors.length) {
+            skipMode = false;
+        }
+    }
+
+    function onNode(node) {
+
+        // How to rewrite that? Looks strange, but works.
+        if (!!args.omitNode) {
+            if (skipMode) {
+                skipNode(node);
+                return;
+            }
+            else {
+                skipMode = args.omitNode(node);
+                if (skipMode) {
+                    skipNode(node);
+                    return;
+                }
+            }
+        }
+        
+        let currentParent = ancestors[ancestors.length-1].node;
+
+        // attach node to parent
+        let child = createNode(currentParent, node);
+
+        if (node.hasChildren) {
+            ancestors.push({
+                node: child, // this will be parent on the next call
+                isLast: node.isLastChild
+            });
+        }
+        else if (node.isLastChild) {
+            while (ancestors.length > 1 && (ancestors.pop()).isLast) {}
+        }
+    }
+
+    objTreeTest2.traverse(onNode);
+
+    if (__DEBUG__) {
+        console.log("\n\nReplicated Tree:");
+        let tree2 = new ObjectTree(root);
+        tree2.traverse(NodePrinter);
+    }
+
     return root;
 }
 
-var tree = CreateTree("i11");
-let objTree2 = new ObjectTree(tree);
+if (__DEBUG__) {
+    var tree = ReplicateTree({
+        doNode: (node) => {
+        },
+        omitNode: (node) => node.id.includes("i") || node.data === "Vogel"
+        // omitNode: (node) => node.id.includes("2") || node.data === "Vogel"
+        // omitNode: (node) => node.id === "w"
+    });
+}
 
-console.log("\n\n->  root:")
-objTree2.traverse(NodePrinter);
-
-
-
-
+// =================================================================
 if (module.hot) {
   module.hot.accept();
 }
