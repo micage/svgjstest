@@ -29,26 +29,24 @@ class ObjectTree {
 
             let key = keys[i];
             var child = obj[key];
+            node.id = key;
             
             if (child === null || child === undefined) {
                 node.numChildren = 0;
-            } else {
-                node.numChildren = Object.keys(child).length;
             }
-            node.hasChildren = !!node.numChildren;
-
-            if (Array.isArray(child)) {
+            else if (Array.isArray(child)) {
                 node.id = key + "[" + child.length + "]";
+                node.numChildren = child.length;
             }
             else if (child && typeof child === "object") {
-                node.id = key;
+                node.numChildren = Object.keys(child).length;
+                node.hasChildren = !!node.numChildren;
             }
             else {
-                node.hasChildren = false;
                 node.numChildren = 0;
-                node.id = key;
             }
 
+            node.hasChildren = !!node.numChildren;
             node.data = child;
             node.isLastChild = i === keys.length - 1;
             node.depth++;

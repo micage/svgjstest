@@ -19,7 +19,7 @@ let test2 = {
             i111: "Vogel",
             i112: {
                 x: 0, 
-                y: 0, 
+                y: null, 
                 w: 400
             },
         },
@@ -39,6 +39,7 @@ function ReplicateTree(args) {
     if (__DEBUG__) {
         console.log("\n\nOriginal Tree: ")
         objTreeTest2.traverse(NodePrinter); // original tree
+        console.log('\nskipped nodes:');        
     }
 
     var root = {}; // of new tree
@@ -47,8 +48,9 @@ function ReplicateTree(args) {
     var skipMode = false;
 
     /**
-     * @param {Object} node - dep1 node
-     * @return {Object} - dep2 node
+     * @param {Object} parent - tree2 node
+     * @param {Object} node - tree1 node
+     * @return {Object} - tree2 node
      */
     function createNode(parent, node) {
         // 'parent' is just an object here, so we just add a key and set its value.
@@ -63,7 +65,7 @@ function ReplicateTree(args) {
 
     function skipNode(node) {
 
-        console.log(node.id + ': ' + node.data + ' -> omitted');
+        if (__DEBUG__) console.log(node.id + ': ' + JSON.stringify(node.data));
 
         if (node.hasChildren) {
             skipAncestors.push(node);
@@ -123,9 +125,8 @@ function ReplicateTree(args) {
 
 if (__DEBUG__) {
     var tree = ReplicateTree({
-        doNode: (node) => {
-        },
-        omitNode: (node) => node.id.includes("i") || node.data === "Vogel"
+        doNode: (node) => {},
+        // omitNode: (node) => node.id.includes("i") || node.data === "Vogel"
         // omitNode: (node) => node.id.includes("2") || node.data === "Vogel"
         // omitNode: (node) => node.id === "w"
     });
