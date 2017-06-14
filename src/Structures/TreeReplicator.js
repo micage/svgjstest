@@ -1,55 +1,90 @@
-if (__DEBUG__) {
-    import ObjectTree from "./Structures/ObjectTree";
+import * as __ from "../Util/ParamCheck";
+import ObjectTree from "./ObjectTree";
 
-    /**
-     * @param {Object} parent - tree2 node
-     * @param {Object} node - tree1 node
-     * @return {Object} - tree2 node
-     */
-    function createNode(parent, node) {
+if (__DEBUG__) {
+    var NodePrinter = require("./ObjectTree").NodePrinter;
+
+    function createNode(parent, nodeInfo) {
         // 'parent' is just an object here, so we just add a key and set its value.
         // This has not always to be the case.
         // 'parent' could also be any arbitrary class that is able to 
         // create and add a child node.
 
-        parent[node.id] = node.hasChildren ? {} : node.data
+        parent[nodeInfo.id] = nodeInfo.hasChildren ? {} : nodeInfo.data
 
-        return parent[node.id];
+        return parent[nodeInfo.id];
     }
-
 }
 
 
+/**
+  @typedef NodeInfo
+  @type {object}
+  @property {string} id
+  @property {boolean} hasChildren
+  @property {boolean} isLastChild
+ */
+
+/**
+ * @callback CreateNodeCb
+ * @param { Node } parent - ...
+ * @param { NodeInfo } childNodeInfo - ...
+ * @return { Node }
+ */
+
+/**
+ * @callback SkipNodeCB
+ * @param { Node } node - currently tested node
+ * @return { boolean } - if true, node and its descendants are skipped
+ */
+
+/**
+ * @callback TraverseFunc
+ * @param { NodeInfo } node - currently traversed node
+ * @return { boolean } - if false, traversal is stopped
+ */
+
+/**
+  @typedef ReplicateTreeArgs
+  @type {object}
+  @property {CreateNodeCb} createNode - creates a node and adds it to parent.
+  @property {SkipNodeCB} skipNode - your name.
+  @property {TraverseFunc} traverse - your age.
+ */
+
+/**
+ * @param {ReplicateTreeArgs}
+ * @return {object}
+ */
 export default
 function ReplicateTree(args) {
-
     if (__DEBUG__) {
-        if (typeof args.traverse !== "function") {
-            return console.error("ReplicateTree: no traverse function provided.")
+        if (!__.checkObject(args)) {
+            return console.error("ReplicateTree: no argument provided.")
+        }
+        if (!__.checkObject(args.container)) {
+            return console.error("ReplicateTree: no container provided.")
         }
         if (typeof args.createNode !== "function") {
             return console.error("ReplicateTree: no createNode function provided.")
         }
-        console.log("\n\nOriginal Tree: ")
-        objTreeTest2.traverse(NodePrinter); // original tree
-        console.log('\nskipped nodes:');
     }
 
-    var root = {}; // of new tree
+    var root = args.createNode();
+    
     var ancestors = [{ node: root, isLast: true }];
     var skipAncestors = [];
     var skipMode = false;
 
-    function skipNode(node) {
+    function skipNode(nodeInfo) {
 
-        if (__DEBUG__) console.log(node.id + ': ' + JSON.stringify(node.data));
-
-        if (node.hasChildren) {
-            skipAncestors.push(node);
+        if (nodeInfo.hasChildren) {
+            skipAncestors.push(nodeInfo);
+            ancestors.push({ isLast: nodeInfo.isLastChild });
         }
-        else if (node.isLastChild) {
-            while (skipAncestors.length && (skipAncestors.pop()).isLastChild) { }
-            while (ancestors.length > 1 && (ancestors.pop()).isLast) { }
+        else if (nodeInfo.isLastChild) {
+            while (skipAncestors.length && skipAncestors.pop().isLastChild) { }
+            while (ancestors.length > 1 && ancestors.pop().isLast) { }
         }
         if (!skipAncestors.length) {
             skipMode = false;
@@ -57,18 +92,18 @@ function ReplicateTree(args) {
     }
 
     // visits traversable
-    function onNode(node) {
+    function onNode(nodeInfo) {
 
         // How to rewrite that? Looks strange, but works.
-        if (!!args.omitNode) {
+        if (!!args.skipNode) {
             if (skipMode) {
-                skipNode(node);
+                skipNode(nodeInfo);
                 return;
             }
             else {
-                skipMode = args.omitNode(node);
+                skipMode = args.skipNode(nodeInfo);
                 if (skipMode) {
-                    skipNode(node);
+                    skipNode(nodeInfo);
                     return;
                 }
             }
@@ -76,27 +111,21 @@ function ReplicateTree(args) {
 
         let currentParent = ancestors[ancestors.length - 1].node;
 
-        // attach node to parent
-        let child = args.createNode(currentParent, node);
+        // create a node from nodeInfo and add it to parent
+        let child = args.createNode(currentParent, nodeInfo);
 
-        if (node.hasChildren) {
+        if (nodeInfo.hasChildren) {
             ancestors.push({
-                node: child, // this will be parent on the next call
-                isLast: node.isLastChild
+                node: child, // this will be parent in the next call
+                isLast: nodeInfo.isLastChild
             });
         }
-        else if (node.isLastChild) {
+        else if (nodeInfo.isLastChild) {
             while (ancestors.length > 1 && (ancestors.pop()).isLast) { }
         }
     }
 
-    args.traversable.traverse(onNode);
-
-    if (__DEBUG__) {
-        console.log("\n\nReplicated Tree:");
-        let tree2 = new ObjectTree(root);
-        tree2.traverse(NodePrinter);
-    }
+    args.container.traverse(onNode);
 
     return root;
 }
