@@ -1,3 +1,5 @@
+// ReplicateTree Sample
+
 const path = require('path');
 const webpack = require('webpack');
 const buildPath = path.resolve(__dirname, '');
@@ -34,7 +36,7 @@ module.exports = {
 
         new webpack.NamedModulesPlugin(),
         
-        new HtmlWebpackPlugin({ title: 'Tree Replication Test' }),
+        new HtmlWebpackPlugin({ title: 'Tree Replication with applied filtering' }),
 
         // Allows error warnings but does not stop compiling.
         // new webpack.NoEmitOnErrorsPlugin(),
@@ -46,6 +48,14 @@ module.exports = {
     ],
     module: {
         rules: [
+            {
+                test: /\.jsx?$/,
+                loader: 'babel-loader',
+                options: {
+                    presets: ['es2015']
+                },
+                exclude: /(node_modules|plugins|platforms|hooks|node_server)/
+            },
             {
                 test: /\.(less)$/,
                 use: [
@@ -70,37 +80,8 @@ module.exports = {
                 ]
             },
             {
-                test: /\.jsx?$/,
-                loader: 'babel-loader',
-                options: {
-                    presets: ['es2015']
-                },
-                exclude: /(node_modules|plugins|platforms|hooks|node_server)/
-            },
-            {
-                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "url-loader?limit=10000&mimetype=application/font-woff"
-            },
-            {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url-loader?limit=10000&mimetype=application/octet-stream"
-            },
-            {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "file-loader"
-            },
-            {
-                test: /\.(png|jpg)?$/,
-                loader: "file-loader"
-            },
-            // {
-            //     test: /\.jpg/,
-            //     loader: "file-loader!url-loader?limit=10000&minetype=image/jpg"
-            // },
-            {
-                test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "url-loader?limit=10000&mimetype=image/svg+xml"
-                // loader: "file-loader"
+                test: /\.(eot|svg|ttf|woff|woff2)$/,
+                loader: 'file-loader?name=www/fonts/[name].[ext]'
             }
         ]
     }

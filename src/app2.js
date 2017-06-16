@@ -1,12 +1,18 @@
+import * as __ from "./Util/ParamCheck";
+import * as DOM from "./DOM/Elements";
 import ObjectTree from "./Structures/ObjectTree";
+import { NodePrinter } from "./Structures/ObjectTree";
+import ReplicateTree from "./Structures/TreeReplicator";
+import SplitView from "./DOM/SplitView";
+import TreeViewFlagged from "./DOM/TreeViewFlagged";
 
-// Abteilung 2
-let NodePrinter = node => {
-    let tabs = Array.from({length: node.depth}, () => "+--").join("");
-    if (node.id === "i_11") return false; // stops traversal if condition fits
-    console.log(tabs + node.id + (node.hasChildren ? "" : ": " + node.data));
-};
+import styles from "./app2.less";
+import "../fonts/icomoon/style.css"; // icomoon svg font
+// const icons = require("../fonts/style.css"); // icomoon svg font
 
+if (__DEBUG__) console.log("Debug Mode");
+
+// some test data
 let test2 = {
     name: "Heinz",
     age: 42,
@@ -18,10 +24,14 @@ let test2 = {
         i11: {
             i111: "Vogel",
             i112: {
+                i1121: {
+                    i11211: "i11211 data"
+                },
                 x: 0, 
-                y: null, 
+                y: null,
                 w: 400
             },
+            // i113: "test",
         },
         i12: {
             i121: "i121 data"
@@ -31,106 +41,132 @@ let test2 = {
     i3: "i3 data"
 };
 
+let filter = [
+    (n, c) => n.id.includes(c),
+    (n, str) => typeof n.data === str
+];
+const skipNode = (nodeInfo) => 
+    (nodeInfo.id.includes("21") || 
+    (typeof nodeInfo.data === "number"));
+// const skipNode = (nodeInfo) => nodeInfo.id.includes("121");
+let skipNodeStr = "<pre>Filtered: skip(nodeInfo) {\n\t" + 
+    skipNode.toString().match(/(\breturn\b.*)/g) + 
+    "\n}</pre>";
 
-export default
-function ReplicateTree(args) {
-    var objTreeTest2 = new ObjectTree(test2);
+let objTree = new ObjectTree(test2);
 
-    if (__DEBUG__) {
-        console.log("\n\nOriginal Tree: ")
-        objTreeTest2.traverse(NodePrinter); // original tree
-        console.log('\nskipped nodes:');        
+// ================================================================
+// creates DOM nodes
+// Note that you have not to care about tree structure here
+// all left to do is create a Node from NodeInfo
+function createNode2(parent, nodeInfo) {
+
+    if (!parent) { // its root
+        return DOM.UnorderedList();
     }
 
-    var root = {}; // of new tree
-    var ancestors = [{ node:root, isLast: true }];
-    var skipAncestors = [];
-    var skipMode = false;
+    let nodeLabelText = nodeInfo.id + 
+        ((!__.checkObject(nodeInfo.data) && !__.checkArray(nodeInfo.data)) ?
+            ": " + nodeInfo.data : "");
 
-    /**
-     * @param {Object} parent - tree2 node
-     * @param {Object} node - tree1 node
-     * @return {Object} - tree2 node
-     */
-    function createNode(parent, node) {
-        // 'parent' is just an object here, so we just add a key and set its value.
-        // This has not always to be the case.
-        // 'parent' could also be any arbitrary class that is able to 
-        // create and add a child node.
 
-        parent[node.id] = node.hasChildren ? {} : node.data
-        
-        return parent[node.id];
+    // create list item content
+    let itemArgs = {
+        children: [
+            DOM.Div({
+                class: styles["list-item-div"],
+                children: [
+                    DOM.Span({
+                        class: [
+                            nodeInfo.hasChildren ? "icon-folder-open" : "icon-minus", 
+                            styles.icon
+                        ].join(" ")
+                    }),
+                    DOM.Span({ class: styles.itemLabel, innerText: nodeLabelText }),
+                ]
+            }),
+        ]
+    };
+
+    let ul = null;
+
+    if (nodeInfo.hasChildren) {
+        ul = DOM.UnorderedList();
+
+        itemArgs.children.push(ul); // appended after .list-item-div, will be parent in the next call
     }
 
-    function skipNode(node) {
+    let child = DOM.ListItem(itemArgs);
+    parent.appendChild(child);
 
-        if (__DEBUG__) console.log(node.id + ': ' + JSON.stringify(node.data));
-
-        if (node.hasChildren) {
-            skipAncestors.push(node);
-        }
-        else if (node.isLastChild) {
-            while (skipAncestors.length && (skipAncestors.pop()).isLastChild) {}
-            while (ancestors.length > 1 && (ancestors.pop()).isLast) {}
-        }
-        if (!skipAncestors.length) {
-            skipMode = false;
-        }
-    }
-
-    function onNode(node) {
-
-        // How to rewrite that? Looks strange, but works.
-        if (!!args.omitNode) {
-            if (skipMode) {
-                skipNode(node);
-                return;
-            }
-            else {
-                skipMode = args.omitNode(node);
-                if (skipMode) {
-                    skipNode(node);
-                    return;
-                }
-            }
-        }
-        
-        let currentParent = ancestors[ancestors.length-1].node;
-
-        // attach node to parent
-        let child = createNode(currentParent, node);
-
-        if (node.hasChildren) {
-            ancestors.push({
-                node: child, // this will be parent on the next call
-                isLast: node.isLastChild
-            });
-        }
-        else if (node.isLastChild) {
-            while (ancestors.length > 1 && (ancestors.pop()).isLast) {}
-        }
-    }
-
-    objTreeTest2.traverse(onNode);
-
-    if (__DEBUG__) {
-        console.log("\n\nReplicated Tree:");
-        let tree2 = new ObjectTree(root);
-        tree2.traverse(NodePrinter);
-    }
-
-    return root;
+    // for leaf nodes this will return null
+    // if this node has no children the return value will not be used
+    // otherwise it will be parent in the next call
+    return ul;
 }
 
-if (__DEBUG__) {
-    var tree = ReplicateTree({
-        doNode: (node) => {},
-        // omitNode: (node) => node.id.includes("i") || node.data === "Vogel"
-        // omitNode: (node) => node.id.includes("2") || node.data === "Vogel"
-        // omitNode: (node) => node.id === "w"
-    });
-}
+var rootOriginal = ReplicateTree({
+    container: objTree,
+    createNode: createNode2,
+});
+
+var rootFiltered = ReplicateTree({
+    container: objTree,
+    createNode: createNode2,
+    skipNode
+});
+
+DOM.App(
+    DOM.Div({
+        children: [
+            SplitView({
+                class: styles.SplitView,
+                children: [
+                    // original tree
+                    DOM.Div({ class: styles.one, children: [                    
+                        DOM.Div({ class: styles.viewHeader, innerText: "Original" }),       
+                        DOM.Div({
+                            class: styles.tree, children: [rootOriginal]
+                        })
+                    ]}),
+                    // filtered tree
+                    DOM.Div({ class: styles.two, children: [
+                        DOM.Div({ 
+                            class: styles.viewHeader, 
+                            innerHTML: skipNodeStr
+                        }),       
+                        // DOM.Div({
+                        //     class: styles.tree, children: [rootFiltered]
+                        // }),
+                        TreeViewFlagged({
+                            class: styles.tree, container: objTree, skipNode
+                        }),
+                    ]}),
+                ]
+            }),
+        ]
+    })
+);
+
+// ================================================================
+// creates an object literal, which is then printed to console via ObjectTree/NodePrinter
+console.log("\nOriginal Tree:");
+objTree.traverse(NodePrinter);
+var obj = ReplicateTree({
+    container: objTree,
+    createNode: function (parent, nodeInfo) {
+        if (!parent) return {};
+        // 'parent' is just an object here, so we add a key and set its value.
+        parent[nodeInfo.id] = nodeInfo.hasChildren ? {} : nodeInfo.data
+
+        return parent[nodeInfo.id];
+    },
+    skipNode // apply filter
+});
+console.log("\nReplicated Tree:");
+(new ObjectTree(obj)).traverse(NodePrinter);
+console.log("");
+
 
 // =================================================================
 if (module.hot) {

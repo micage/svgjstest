@@ -1,0 +1,22 @@
+.splitview {
+    &.h {
+        > * {
+            vertical-align: top;
+            overflow-x: hidden;
+            // overflow-y: auto;
+        }
+        > :nth-child(2) {
+            background-color: #ccd;
+            min-width: 4px;
+            cursor: ew-resize;
+        }
+    }
+
+    &.v {
+        > :nth-child(2) {
+            background-color: #ccd;
+            min-height: 4px;
+            cursor: ns-resize;
+        }
+    }
+}

@@ -3,24 +3,29 @@ import * as __ from "../Util/ParamCheck";
 /* Manifesto
 Maybe this the point where the buzzword "immutability" comes into play.
 An observable can only detect changes to it's value. If properties
-of an object are altered the reference stays the same. So the value
-of the observable hasn't changed and no listener has to be called.
+inside an object are changed the reference stays the same. So the value
+of the observable will not change, hence no listener will be called.
 
-Maybe we could provide specialized observable for complex datatypes - 
-like ObservableArray, ObservableTree. We will not be able to just
-"set" or "get" a value for this types. Instead we have to call
-functions which alter a node of a tree for example and inform the
-listener which node has changed. ObservableTree will act as an interface
-to the "real" tree with which you can add or remove nodes, change
-node data and so on.
+But replacing a complete structure, just that the observable will
+detect a change is a ridiculous waste of CPU usage. And the waste
+increases with the size of the structure that has been changed.
+(-> react, and their 'oppinionated' immutability bla bla)
+
+We can provide specialized observables for complex datatypes - 
+like ObservableArray, ObservableTree. By just calling "get" or "set" 
+for such a type we would replace the reference to the container.
+
+Instead we have to call functions which 
+alter a member of the container and inform the listener which member
+has changed. ObservableTree for exaple would act as a proxy to a "real" 
+tree. This approach makes it easy not only to detect changes but also 
+exactly what has changed.
 */
 
 /**
- * @class
  * @constructor
- * @param {Number|String|Boolean} val
  */
-var Observable = function () {
+const Observable = function () {
     this._listeners = [];
 }
 
@@ -32,9 +37,8 @@ Observable.prototype = {
 
     /** @param {function(val): undefined} callback - comment */
     removeListener: function (callback) {
-        var i = 0,
-            len = this._listeners.length;
-        for (; i < len; i++) {
+        var i = this._listeners.length;
+        while (i--) { // 0 is included
             if (this._listeners[i] === callback) {
                 this._listeners.splice(i, 1); // remove found listener
                 return;
@@ -44,9 +48,8 @@ Observable.prototype = {
 
     /** @private */
     _callback: function (val) {
-        var i = 0,
-            len = this._listeners.length;
-        for (; i < len; i++) {
+        var i = this._listeners.length;
+        while (i--) { // 0 is included
             this._listeners[i].call(this, val);
         }
     }

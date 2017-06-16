@@ -5,7 +5,7 @@ const NodePrinter = (node, breakCondition) => {
     let tabs = Array.from({ length: node.depth }, () => ".  ").join("");
     if (breakCondition && breakCondition()) return false; // stops traversal if condition fits
     let str = "";
-    if (!(node.data instanceof Object)) {
+    if (!__.checkObject(node.data) && !__.checkArray(node.data)) {
         str = " -> " + node.data;
     }
     console.log(tabs + node.id + str);
@@ -65,6 +65,10 @@ class ObjectTree {
             depth: 0
         };
         this._preOrder(this._json, visitor, nodeInfo);
+    }
+
+    compare(tree) {
+        
     }
 
 }

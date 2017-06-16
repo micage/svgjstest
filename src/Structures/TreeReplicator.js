@@ -27,8 +27,8 @@ if (__DEBUG__) {
 
 /**
  * @callback CreateNodeCb
- * @param { Node } parent - ...
- * @param { NodeInfo } childNodeInfo - ...
+ * @param { Node } parent - if !parent, create root, Node can be anything
+ * @param { NodeInfo } childNodeInfo - if !parent this isn't used
  * @return { Node }
  */
 
@@ -70,8 +70,14 @@ function ReplicateTree(args) {
         }
     }
 
+    // createNode has to deal with undefined args (and create the root node)
+    // at this point/context we haven't got a parent and also no nodeInfo
+    // so we cannot provide it
+    // Note: nodes created are completey opaque to ReplicateTree
+    // if createNode decides to return nothing this will be ok.
     var root = args.createNode();
     
+    // we know that root is last, there is only one root
     var ancestors = [{ node: root, isLast: true }];
     var skipAncestors = [];
     var skipMode = false;

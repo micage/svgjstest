@@ -1,5 +1,3 @@
-var __DEBUG__;
-
 import * as __ from "../Util/ParamCheck";
 import * as Evt from "./Events";
 
@@ -66,8 +64,8 @@ export const ApplyStyle = (node, style) => {
 
 export const AddClasses = (elem, classStr) => {
     if (__DEBUG__) {
-        if (!(elem instanceof Element)) throw Error("elem is not an Element");
-        if (!__.checkString(classStr)) throw Error("classStr is not a string");
+        if (!(elem instanceof Element)) throw Error("Elements: elem is not an Element");
+        if (!__.checkString(classStr)) throw Error("Elements: classStr is not a string");
     }
 
     let list = classStr.split(' ');
@@ -76,25 +74,24 @@ export const AddClasses = (elem, classStr) => {
 
 const CopyProps = (elem, props) => {
     if (__DEBUG__) {
-        if (!(elem instanceof Element)) throw Error("node is not an Element");
-        if (!__.checkObject(props)) throw Error("props is not an Object");
+        if (!(elem instanceof Element)) throw Error("Elements: elem is not an Element");
+        if (!__.checkObject(props)) throw Error("Elements: props is not an Object");
     }
     Object.keys(props).forEach(prop => {
         if (__DEBUG__) {
-            if (!__.checkObject(props)) throw Error("props is not an Object");
-            if (prop !== "class" && prop !== 'children' && prop !== 'style') {
-                throw Error("props should not contain: class|children|style|listenTo")
+            if (prop === "class" && prop === 'children' && prop === 'style' && prop === 'listenTo') {
+                throw Error("Elements: props should not contain: class|children|style|listenTo")
             }
-        } else {
-            elem[prop] = props[prop];
         }
+        
+        elem[prop] = props[prop];
     });
 };
 
-const CopyListener = (elem, listeners) => {
+const AddListeners = (elem, listeners) => {
     if (__DEBUG__) {
-        if (!(elem instanceof Element)) throw Error("node is not an Element");
-        if (!__.checkObject(listeners)) throw Error("listeners is not an Object");
+        if (!(elem instanceof Element)) throw Error("Elements: noelemde is not an Element");
+        if (!__.checkObject(listeners)) throw Error("Elements: listeners is not an Object");
     }
     Object.keys(listeners).forEach(key => {
         elem.addEventListener(key, listeners[key]);
@@ -107,7 +104,7 @@ const Create = (args) => {
     if (args.class) AddClasses(elem, args.class); delete args.class;
     if (args.style) ApplyStyle(elem, args.style); delete args.style;
     if (args.children) AppendChildren(elem, args.children); delete args.children;
-    if (args.listenTo) CopyListener(elem, args.listenTo); delete args.listenTo;
+    if (args.listenTo) AddListeners(elem, args.listenTo); delete args.listenTo;
     CopyProps(elem, args);
 
     return elem;
@@ -143,7 +140,7 @@ export const App = (elem) => {
     // if (args.class) AddClasses(elem, args.class); delete args.class;
     // if (args.style) ApplyStyle(elem, args.style); delete args.style;
     // if (args.children) AppendChildren(elem, args.children); delete args.children;
-    // if (args.listenTo) CopyListener(elem, args.listenTo); delete args.listenTo;
+    // if (args.listenTo) AddListeners(elem, args.listenTo); delete args.listenTo;
     // CopyProps(elem, args);
 
     document.addEventListener("DOMContentLoaded", mount);
@@ -155,7 +152,6 @@ export const Div = (args) => {
 
     return Create(_args);
 };
-
 export const Group = Div;
 
 export const Span = (args) => {
@@ -213,3 +209,23 @@ export const TextArea = (args) => {
 
     return Create(_args);
 };
+
+export const ListItem = (args) => {
+    if(__DEBUG__) if(!__.checkObject(args)) args = {};
+    args.Type = 'li';
+    return Create(args);
+};
+
+export const OrderedLists = (args) => {
+    if (__DEBUG__) if (!__.checkObject(args)) args = {};
+    args.Type = 'ol';
+    return Create(args);
+};
+
+export const UnorderedList = (args) => {
+    if (__DEBUG__) if (!__.checkObject(args)) args = {};
+
+    args.Type = 'ul';
+    return Create(args);
+};
+

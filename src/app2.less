@@ -1,0 +1,84 @@
+@spHeight: 300px;
+@spHeaderHeight: 50px;
+@dummy: 20px;
+
+html {
+    font-family: sans-serif;
+}
+
+.viewHeader {
+    height: @spHeaderHeight;
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+    background-color: #eee;
+    text-overflow: clip;
+    // white-space: nowrap;
+    pre {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: .8em;
+    }
+}
+
+.list-item-div {
+    padding-left: 100%;
+    margin-left: -100%;
+    user-select: none;
+    white-space:nowrap;
+    cursor: default;
+    &:hover{
+        background-color: #efe;
+    }
+    &:active{
+        background-color: #fed;
+    }
+
+    .icon {
+        // display: inline-block;
+        // height: 22px;
+        // width: 22px;
+        // border: 1px solid #ddd;
+        // border-radius: 50%;
+        // vertical-align: middle;
+        color: #dcc;
+    }
+    .itemLabel {
+        display: inline-block;
+        border: 0px solid #ddd;
+        // vertical-align: middle;
+        padding-left: 6px;
+    }
+}
+
+.SplitView {
+    height: @spHeight;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+
+    // .one, .two {
+    > * {
+        overflow-y: hidden;
+        .tree {
+            > :first-child {
+                padding: 0;
+                position: relative;
+                margin-left: -16px;
+                margin-top: 6px;
+            }
+            height: @spHeight - @spHeaderHeight - @dummy;
+            // overflow-x: hidden;
+            overflow-y: auto;
+
+            ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            li {
+                margin:0;
+                padding: 0; 
+                padding-left: 20px;
+            }
+        }
+    }
+}

@@ -58,6 +58,7 @@ export const split = function(box, options ) {
         let childStyle = divs.item(i).style;
         if (settings.horizontal) {
             childStyle.display = "inline-block";
+            childStyle["vertical-align"] = "top";
             childStyle.height = boxHeight + "px";
         }
         else {
@@ -117,7 +118,7 @@ export const split = function(box, options ) {
         if (settings.horizontal) {
             let oneWidth = mouseX - box.offsetLeft - barX;
             let barWidth = bar.offsetWidth;
-            let twoWidth = boxWidth - oneWidth - barWidth;
+            let twoWidth = box.clientWidth - oneWidth - barWidth;
             if (twoWidth < 0) {
                 twoWidth = 0;
                 oneWidth = boxWidth - barWidth;
@@ -133,7 +134,7 @@ export const split = function(box, options ) {
         else { // vertical
             let oneHeight = mouseY - box.offsetTop - barY;
             let barHeight = barHeight;
-            let twoHeight = boxHeight - oneHeight - barHeight;
+            let twoHeight = box.clientHeight - oneHeight - barHeight;
             if (twoHeight < 0) {
                 twoHeight = 0;
                 oneHeight = boxHeight - barHeight;

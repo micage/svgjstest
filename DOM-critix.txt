@@ -1,0 +1,26 @@
+So, MutationObservers (ha ha!)
+
+That's the crux with event-driven communication. You might not know
+who is interested in an event, so you have to 'broadcast' it by
+asking each and every member: "Are you interested in this event?".
+This sounds slow. And it is. And the reason for deprecating mutation 
+events like e.g. DOMSubtreeModified.
+
+But i have a sneaking suspicion that this is just due to bad
+implementation of the DOM event distribution system. The DOM knows
+exactly who is interested in which event. But ... its own messages are
+polluting the tree of DOM-Elements the whole time and the internal routing
+of their own messages is highly intransparent/ badly documented.
+My guess is that guys that can handle the complexity of the DOM implementation
+are hard to find. And doing it cleanly from scratch is no option because
+the whole internet is relying on the old shit.
+
+Only god knows why browser vendors are using clean interfaces and
+classes internally and give users such a fragile, slow and error-prown
+DOM-Event-API (which leads to all sorts of spaghetti-code).
+One has to permit window, document and all the other global monsters.
+Their all-round accessabilty prevents encapsulation very effectively.
+
+With an object-oriented observer (publish-subscribe) pattern however
+their is a direct connection between observable and listener, which
+is more performant and also much cleaner.
