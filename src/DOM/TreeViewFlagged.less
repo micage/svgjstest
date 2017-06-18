@@ -3,6 +3,7 @@
 @spHeaderHeight: 50px;
 @strange: 20px;
 @icon-width: 20px;
+@item-height: 20px;
 @shift: 200px; // has to be enough, else increase it
 @num-flags: 3;
 
@@ -13,7 +14,7 @@
     white-space: nowrap;
     cursor: default;
     &:hover{
-        background-color: #efefef;
+        background-color: #f3f3f3;
     }
     &:active{
         background-color: #fed;
@@ -22,10 +23,14 @@
 .list-item-flags {
     position: absolute;
     left: @icon-width;
-    border-right: 1px solid #ccc;
     .icon {
-        padding: 2px;
-        color: #6af;
+        display: table-cell;
+        height: @item-height;
+        border-right: 1px solid #ccc;
+        padding: 0 4px;
+        &:nth-child(1) { color: #67a; } 
+        &:nth-child(2) { color: #238; } 
+        
     }
 }
 .list-item-div {
