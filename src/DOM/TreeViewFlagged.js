@@ -10,11 +10,54 @@ TODO:
     if its supposed to be a hidden node its id and data should somehow 
     be attached to the parent of the skipped node 
 
-    onItemCreate -> set icon + label, treeview should povide defaults
+    onItemCreate -> set icon + label, treeview should provide defaults
 
 
 */
 
+function toggleFolder(icon) {
+    toggleFlag({
+        icon, on: "icon-folder-open", off: "icon-folder",
+        job: (onoff) => {
+            icon.parentElement.parentElement.nextElementSibling.style.display =
+                (onoff === "on" ? "" : "none");
+        }
+    });
+}
+
+function toggleLock(icon) {
+    toggleFlag({
+        icon, on: "icon-lock-open", off: "icon-lock",
+        job: (onoff) => {
+            console.log("node " + (onoff === "on" ? "unlocked" : "locked"))
+        }
+    });
+}
+
+function toggleEye(icon) {
+    toggleFlag({
+        icon, on: "icon-eye", off: "icon-eye-blocked",
+        job: (onoff) => {
+            console.log("node " + (onoff === "on" ? "visible" : "hidden"))
+        }
+    });
+}
+
+// args = { icon, onClass, offClass, job = ("on"|"off") => {} }
+function toggleFlag(args) {
+    let icon = args.icon;
+    let cl = icon.classList;
+    if (cl.contains(args.off)) {
+        cl.remove(args.off);
+        cl.add(args.on);
+        args.job("on");
+    }
+    else if (cl.contains(args.on)) {
+        cl.remove(args.on);
+        cl.add(args.off);
+        args.job("off");
+    }
+}
 
 /**
  * Creates a tree from a container that traverses over NodeInfo structs
@@ -60,7 +103,16 @@ function CreateFlaggedTreeView(args) {
                             class: styles["list-item-flags"],
                             children: [                             // this should be dynamic
                                 DOM.Span({
-                                    class: "icon-eye " + styles.icon
+                                    class: "icon-eye " + styles.icon,
+                                    listenTo: {
+                                        click: (ev) => toggleEye(ev.target)
+                                    }
+                                }),
+                                DOM.Span({
+                                    class: "icon-lock " + styles.icon,
+                                    listenTo: {
+                                        click: (ev) => toggleLock(ev.target)
+                                    }
                                 })
                         ]}),
                         DOM.Div({
@@ -70,7 +122,10 @@ function CreateFlaggedTreeView(args) {
                                     class: [
                                         nodeInfo.hasChildren ? "icon-folder-open" : "icon-minus",
                                         styles.icon
-                                    ].join(" ")
+                                    ].join(" "),
+                                    listenTo: {
+                                        click: (ev) => toggleFolder(ev.target)
+                                    }
                                 }),
                                 DOM.Span({
                                     class: styles.itemLabel, 
@@ -95,6 +150,12 @@ function CreateFlaggedTreeView(args) {
         // if this node has no children the return value will not be used
         // otherwise it will be parent in the next call
         return ul;
+    }
+
+    args.listenTo = {
+        click: (ev) => {
+            console.log(ev.target);      
+        }
     }
 
     var root = ReplicateTree({
