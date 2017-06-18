@@ -127,7 +127,11 @@ function ReplicateTree(args) {
             });
         }
         else if (nodeInfo.isLastChild) {
-            while (ancestors.length > 1 && (ancestors.pop()).isLast) { }
+            while (ancestors.length && (ancestors.pop()).isLast) { }
+
+            if (!(ancestors.length)) {
+                return false;
+            }
         }
     }
 
