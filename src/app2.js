@@ -7,7 +7,7 @@ import SplitView from "./DOM/SplitView";
 import TreeViewFlagged from "./DOM/TreeViewFlagged";
 
 import styles from "./app2.less";
-import "../fonts/icomoon/style.css"; // icomoon svg font
+import "../fonts/icomoon2/style.css"; // icomoon svg font
 // const icons = require("../fonts/style.css"); // icomoon svg font
 
 if (__DEBUG__) console.log("Debug Mode");
@@ -41,14 +41,10 @@ let test2 = {
     i3: "i3 data"
 };
 
-let filter = [
-    (n, c) => n.id.includes(c),
-    (n, str) => typeof n.data === str
-];
 const skipNode = (nodeInfo) => 
     (nodeInfo.id.includes("21") || 
     (typeof nodeInfo.data === "number"));
-// const skipNode = (nodeInfo) => nodeInfo.id.includes("121");
+
 let skipNodeStr = "<pre>Filtered: skip(nodeInfo) {\n\t" + 
     skipNode.toString().match(/(\breturn\b.*)/g) + 
     "\n}</pre>";
@@ -105,67 +101,135 @@ function createNode2(parent, nodeInfo) {
     return ul;
 }
 
-var rootOriginal = ReplicateTree({
-    container: objTree,
-    createNode: createNode2,
-});
+if (1) {
+    var rootOriginal = ReplicateTree({
+        container: objTree,
+        createNode: createNode2,
+    });
 
-var rootFiltered = ReplicateTree({
-    container: objTree,
-    createNode: createNode2,
-    skipNode
-});
+    var rootFiltered = ReplicateTree({
+        container: objTree,
+        createNode: createNode2,
+        skipNode
+    });
 
-DOM.App(
-    DOM.Div({
-        children: [
-            SplitView({
-                class: styles.SplitView,
-                children: [
-                    // original tree
-                    DOM.Div({ class: styles.one, children: [                    
-                        DOM.Div({ class: styles.viewHeader, innerText: "Original" }),       
-                        DOM.Div({
-                            class: styles.tree, children: [rootOriginal]
-                        })
-                    ]}),
-                    // filtered tree
-                    DOM.Div({ class: styles.two, children: [
-                        DOM.Div({ 
-                            class: styles.viewHeader, 
-                            innerHTML: skipNodeStr
-                        }),       
-                        // DOM.Div({
-                        //     class: styles.tree, children: [rootFiltered]
-                        // }),
-                        TreeViewFlagged({
-                            class: styles.tree, container: objTree, skipNode
-                        }),
-                    ]}),
-                ]
-            }),
-        ]
-    })
-);
+    DOM.App(
+        DOM.Div({
+            children: [
+                SplitView({
+                    class: styles.SplitView,
+                    children: [
+                        // original tree
+                        DOM.Div({ class: styles.one, children: [                    
+                            DOM.Div({ class: styles.viewHeader, innerText: "Original" }),       
+                            DOM.Div({
+                                class: styles.tree, children: [rootOriginal]
+                            })
+                        ]}),
+                        // filtered tree
+                        DOM.Div({ class: styles.two, children: [
+                            DOM.Div({ 
+                                class: styles.viewHeader, 
+                                innerHTML: skipNodeStr
+                            }),       
+                            // DOM.Div({
+                            //     class: styles.tree, children: [rootFiltered]
+                            // }),
+                            TreeViewFlagged({
+                                class: styles.tree, container: objTree, skipNode
+                            }),
+                        ]}),
+                    ]
+                }),
+            ]
+        })
+    );
+}
 
 // ================================================================
 // creates an object literal, which is then printed to console via ObjectTree/NodePrinter
-console.log("\nOriginal Tree:");
-objTree.traverse(NodePrinter);
-var obj = ReplicateTree({
-    container: objTree,
+if (0) {
+    console.log("\nOriginal Tree:");
+    objTree.traverse(NodePrinter);
+    var obj = ReplicateTree({
+        container: objTree,
+        createNode: function (parent, nodeInfo) {
+            if (!parent) return {};
+            // 'parent' is just an object here, so we add a key and set its value.
+            parent[nodeInfo.id] = nodeInfo.hasChildren ? {} : nodeInfo.data
+
+            return parent[nodeInfo.id];
+        },
+        skipNode // apply filter
+    });
+    console.log("\nReplicated Tree:");
+    (new ObjectTree(obj)).traverse(NodePrinter);
+    console.log("");
+}
+
+
+// ================================================================
+// replicate a tree by using a simple NodeInfo Array
+// that traverses by just iterating over the array
+// it stops iterating if the callback returns false
+
+function CreateRandomNodes(numNodes) {
+    const probLast = 0.3;
+
+    const f = v => 1/(1+.6) * (.6 + Math.sqrt(v));
+
+    return Array.from({ length: numNodes }, (v, i) => ([
+        i,
+        (Math.random() > f(i / numNodes) ? 2 : 0) |
+        (Math.random() < probLast ? 1 : 0)
+    ]));
+}
+
+function InfoArrayTraversor(nodes) {
+    return {
+        traverse: (cb) => {
+            for (var i = 0; i < nodes.length; i++) {
+                var n = nodes[i];
+                var ni = {
+                    id: n[0],
+                    hasChildren: n[1] & 2,
+                    isLastChild: n[1] & 1
+                };
+                if (cb(ni) === false) {
+                    break;
+                }
+            }
+        }
+    }
+}
+var nodes = [[0, 2], [1, 0], [2, 3], [3, 0], [4, 2], [5, 0], [6, 3], [7, 2], [8, 0], [9, 0], [10, 2], [11, 1], [12, 1], [13, 0], [14, 1], [15, 1], [16, 2], [17, 0], [18, 3], [19, 0], [20, 0], [21, 0], [22, 1], [23, 1], [24, 0], [25, 1],];
+var randomTree = InfoArrayTraversor(CreateRandomNodes(26));
+var randomTree2 = InfoArrayTraversor(nodes);
+
+var str = "var nodes = [";
+randomTree.traverse((ni) => str += `[${ni.id}, ${(ni.hasChildren ? 2 : 0) | (ni.isLastChild ? 1 : 0)}], ` );
+str += "];";
+console.log(str);
+
+if(0 && __DEBUG__) CheckInterface(args, {
+        container: {
+            traverse: Function
+        },
+        createNode: Function
+    });
+
+
+var obj2 = ReplicateTree({
+    container: randomTree,
     createNode: function (parent, nodeInfo) {
         if (!parent) return {};
-        // 'parent' is just an object here, so we add a key and set its value.
-        parent[nodeInfo.id] = nodeInfo.hasChildren ? {} : nodeInfo.data
-
+        parent[nodeInfo.id] = nodeInfo.hasChildren ? {} : ""; 
         return parent[nodeInfo.id];
-    },
-    skipNode // apply filter
+    }
 });
-console.log("\nReplicated Tree:");
-(new ObjectTree(obj)).traverse(NodePrinter);
-console.log("");
+console.log("Random Tree:");
+(new ObjectTree(obj2)).traverse(NodePrinter);
+
 
 
 // =================================================================
