@@ -1,33 +1,40 @@
 
 @spHeight: 300px;
 @spHeaderHeight: 50px;
-@dummy: 20px;
+@strange: 20px;
+@icon-width: 20px;
+@shift: 200px; // has to be enough, else increase it
+@num-flags: 3;
 
-.list-item-div {
-    padding-left: 100%;
-    margin-left: -100%;
+.list-item-box {
+    padding-left: @shift + @icon-width * @num-flags;
+    margin-left: -@shift;
     user-select: none;
+    white-space: nowrap;
     cursor: default;
     &:hover{
-        background-color: #efe;
+        background-color: #efefef;
     }
     &:active{
         background-color: #fed;
     }
-
+}
+.list-item-flags {
+    position: absolute;
+    left: @icon-width;
+    border-right: 1px solid #ccc;
     .icon {
-        // display: inline-block;
-        // height: 22px;
-        // width: 22px;
-        // border: 1px solid #ddd;
-        // border-radius: 50%;
-        // vertical-align: middle;
+        padding: 2px;
+        color: #6af;
+    }
+}
+.list-item-div {
+    padding-left: 4px;
+    .icon {
         color: #dcc;
     }
     .itemLabel {
         display: inline-block;
-        border: 0px solid #ddd;
-        // vertical-align: middle;
         padding-left: 6px;
     }
 }
@@ -39,7 +46,7 @@
         margin-left: -16px;
         margin-top: 6px;
     }
-    height: @spHeight - @spHeaderHeight - @dummy;
+    height: @spHeight - @spHeaderHeight - @strange;
     // overflow-x: hidden;
     overflow-y: auto;
 
