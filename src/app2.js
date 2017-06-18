@@ -7,7 +7,7 @@ import SplitView from "./DOM/SplitView";
 import TreeViewFlagged from "./DOM/TreeViewFlagged";
 
 import styles from "./app2.less";
-import "../fonts/icomoon2/style.css"; // icomoon svg font
+import "../fonts/icomoon/style.css"; // icomoon svg font
 // const icons = require("../fonts/style.css"); // icomoon svg font
 
 if (__DEBUG__) console.log("Debug Mode");
