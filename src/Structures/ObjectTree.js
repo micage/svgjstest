@@ -1,12 +1,12 @@
 "use strict";
 import * as __ from "../Util/ParamCheck";
 
-const NodePrinter = (node, breakCondition) => {
-    let tabs = Array.from({ length: node.depth }, () => ".  ").join("");
-    if (breakCondition && breakCondition()) return false; // stops traversal if condition fits
+const NodePrinter = (node) => {
+    let tabs = Array.from({ length: node.depth-1 }, () => ".  ").join("");
+
     let str = "";
     if (!__.checkObject(node.data) && !__.checkArray(node.data)) {
-        str = " -> " + node.data;
+        str = ": " + JSON.stringify(node.data);
     }
     console.log(tabs + node.id + str);
 };
