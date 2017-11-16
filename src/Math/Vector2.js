@@ -28,13 +28,21 @@ class Vector2 {
     }
 
     /** @return {Vector2} a vector perpendicular to this */
-    translate(v) {
+    plus(v) {
         return new Vector2(this._x + v._x, this._y + v._y);
+    }
+    plusIP(v) {
+        this._x += v._x; this._y += v._y;
+        return this;
     }
 
     /** @return {Vector2} */
     scale(s) {
         return new Vector2(this._x * s, this._y * s);
+    }
+    scaleIP(s) {
+        this._x *= s; this._y *= s;
+        return this;
     }
 
     /** @param {number} w - angle */
@@ -53,7 +61,7 @@ class Vector2 {
     }
 
     /** Splits this into components with respect to v,
-     *  one perpedicular to v and one collinear with v
+     *  one perpendicular to v and one collinear with v
      * @param {Vector2} v 
      * @return {{Vector2}, {Vector2}} a vector perpendicular to this.v
      */
@@ -78,6 +86,7 @@ class Vector2 {
     toString(v_name) {
         return `${v_name} = (${this._x.toFixed(2)}, ${this._y.toFixed(2)})`;
     }
+
 }
 
 export default Vector2;

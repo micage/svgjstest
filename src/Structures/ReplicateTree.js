@@ -30,6 +30,12 @@ if (__DEBUG__) {
  * @param { Node } parent - if !parent, create root, Node can be anything
  * @param { NodeInfo } childNodeInfo - if !parent this isn't used
  * @return { Node }
+ * Note that you have not to care about tree structure here
+ * all that is left to do is to create a Node from NodeInfo.
+ * Also note that its totally up to the user what a created
+ * node actually is. It can be 'undefined' if you wish so.
+ * But it will reappear as 'parent' argument of the subsequent call
+ * if nodeInfo.hasChildren is true.
  */
 
 /**

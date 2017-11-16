@@ -12,21 +12,25 @@ increases with the size of the structure that has been changed.
 (-> react, and their 'oppinionated' immutability bla bla)
 
 We can provide specialized observables for complex datatypes - 
-like ObservableArray, ObservableTree. By just calling "get" or "set" 
-for such a type we would replace the reference to the container.
+like ObservableArray, ObservableTree. 
 
-Instead we have to call functions which 
-alter a member of the container and inform the listener which member
-has changed. ObservableTree for exaple would act as a proxy to a "real" 
+Drawback: we cannot just call "get" or "set" value for such a type.
+This would replace the reference to the container.
+
+Instead we have to call functions which alter a member of the container 
+and inform the listener which member has changed. 
+ObservableTree for example would act as a proxy to a "real" 
 tree. This approach makes it easy not only to detect changes but also 
 exactly what has changed.
 */
 
 /**
+ * @class
  * @constructor
+ * @private
  */
-const Observable = function () {
-    this._listeners = [];
+const Observable = function (listener) {
+    this._listeners = (listener ? [listener] : []);
 }
 
 Observable.prototype = {
@@ -55,11 +59,13 @@ Observable.prototype = {
     }
 };
 
+
 /**
  * @class
+ * @constructor
  */
-var ObservableValue = function (val) {
-    Observable.call(this);
+var ObservableValue = function (val, listener) {
+    Observable.call(this, listener);
     this._val = val;
 }
 
@@ -75,11 +81,12 @@ ObservableValue.prototype = Object.create(Observable.prototype, {
     }
 });
 
+
 /**
  * @class
  */
-var ObservableRangedValue = function (val, min, max) {
-    Observable.call(this);
+var ObservableRangedValue = function (val, min, max, listener) {
+    Observable.call(this, listener);
     this._val = val;
     this._min = min;
     this._max = max;
@@ -131,33 +138,74 @@ ObservableRangedValue.prototype = Object.create(Observable.prototype, {
     }
 });
 
+
 /**
  *  @class
  */
-var ObservableArray = function (arr) {
-    Observable.call(this);
+var ObservableArray = function (arr, listener) {
+    Observable.call(this, listener);
     this._arr = arr;
 }
-ObservableArray.prototype = Object.create(Observable.prototype, {
-    removeEntry: {
-        value: function() {
 
+ObservableArray.prototype = Object.create(Observable.prototype, {
+    /** @param {Number} index - will be inserted at the end
+     *  @return {*} value at index
+     */
+    remove: {
+        value: function(index) {
+            let ret = this._arr[index]
+            delete this._arr[index];
+            return ret;
         }
     },
-    /** @param {*} value - will be inserted at the end */
-    addEntry: (value) => {
-
+    /** @param {*} val - value will be inserted at the end */
+    push: {
+        value: function(val) {
+            this._arr.push(val);
+        }
     },
     /** @param {number|string|boolean} val - comment */
     setValueAtIndex: (index, val) => {
-        this._val = val;
-        this._callback(val);
+        let vali = this._val[index];
+        if (vali !== val) {
+            this._val[index] = val;
+            this._callback(index, val);
+        }
+    },
+    /** @param {number|string|boolean} val - comment */
+    getValueAtIndex: (index, val) => {
+        return this._arr[index];
     },
 });
+
+/**
+ * The actual tree class needs to have a findNode function that
+ * takes a full path and returns the appropriate node
+ */
+class ObservableTree {
+    constructor(tree) {
+        if (!__.checkObject(tree)) throw new Error("No valid Tree");
+        this._tree = tree;
+    }
+    createNode(fullPath, nodeAccessor) {
+        let node = this._tree.findNode(fullPath);
+    }
+    readNode(fullPath) {
+
+    }
+    modifyNode(fullPath, data) {
+
+    }
+    deleteNode(fullpath) {
+
+    }
+};
+
 
 export {
     ObservableValue,
     ObservableRangedValue,
-    ObservableArray
+    ObservableArray,
+    ObservableTree
 }
     

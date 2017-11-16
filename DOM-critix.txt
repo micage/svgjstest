@@ -1,12 +1,14 @@
-So, MutationObservers (ha ha!)
+So, now we have MutationObservers ...
+Again it's another of these bad documented and awkward API's.
 
 That's the crux with event-driven communication. You might not know
 who is interested in an event, so you have to 'broadcast' it by
 asking each and every member: "Are you interested in this event?".
 This sounds slow. And it is. And the reason for deprecating mutation 
-events like e.g. DOMSubtreeModified.
+events like e.g. DOMSubtreeModified. Now you have register yourself
+as a listener to modifation events.
 
-But i have a sneaking suspicion that this is just due to bad
+I have a sneaking suspicion that this is just due to bad
 implementation of the DOM event distribution system. The DOM knows
 exactly who is interested in which event. But ... its own messages are
 polluting the tree of DOM-Elements the whole time and the internal routing
@@ -17,10 +19,20 @@ the whole internet is relying on the old shit.
 
 Only god knows why browser vendors are using clean interfaces and
 classes internally and give users such a fragile, slow and error-prown
-DOM-Event-API (which leads to all sorts of spaghetti-code).
-One has to permit window, document and all the other global monsters.
+DOM-API (which leads to all sorts of spaghetti-code).
+One has to tame window, document and all the other global monsters.
 Their all-round accessabilty prevents encapsulation very effectively.
 
 With an object-oriented observer (publish-subscribe) pattern however
 their is a direct connection between observable and listener, which
 is more performant and also much cleaner.
+
+Talking about clean interfaces brings me to another point:
+Creating an element via document.createElement(TAGNAME) gives you
+an object with a sheer endless list of mostly useless properties.
+it then has to be appended to a parents' child list. What you get in
+the end is a tree structure of elements each coming with a large
+inheritance chain and a ton of properties and event function pointers.
+90 percent of them rarely or never used.
+This is a complexity nightmare called DOM. 
+

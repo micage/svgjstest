@@ -1,4 +1,4 @@
-// ReplicateTree Sample
+// TreeTable with pug, step by step
 
 const path = require('path');
 const webpack = require('webpack');
@@ -9,17 +9,29 @@ process.env.DEBUG = true;
 
 module.exports = {
     entry: [
-        './app2.js'
+        './appTableView.js'
     ],
     context: path.join(__dirname, 'src'),
     devServer: {
         contentBase: 'www', // Relative directory for base of server
-        host: '0.0.0.0', // Change to '0.0.0.0' for external facing server
+        host: 'localhost', // Change to '0.0.0.0' for external facing server
         hot: true, // Live-reload
         hotOnly: true,
         inline: true,
         // noInfo: true,
-        port: 3015, // Port Number
+        port: 3016, // Port Number
+        proxy: {
+            '/api': {
+                target: {
+                    host: "micage.mmm",
+                    protocol: 'http:',
+                    port: 80
+                },
+                pathRewrite: { '^/api': '/mmm/svgjs_test/www/php' }
+            },
+            //ignorePath: true,
+            changeOrigin: true,
+        }
     },
     devtool: 'source-map',
     output: {
@@ -36,7 +48,7 @@ module.exports = {
 
         new webpack.NamedModulesPlugin(),
         
-        new HtmlWebpackPlugin({ title: 'Tree Replication with applied filtering' }),
+        new HtmlWebpackPlugin({ title: 'TreeTable with pug, step by step' }),
 
         // Allows error warnings but does not stop compiling.
         // new webpack.NoEmitOnErrorsPlugin(),

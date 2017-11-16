@@ -1,18 +1,18 @@
 
-const getType = param => Object.prototype.toString.call(param);
+var getType = param => Object.prototype.toString.call(param);
 
-const checkType = (param, type) => !!param && getType(param) === `[object ${type}]`;
+var checkType = (param, type) => !!param && getType(param) === `[object ${type}]`;
 
-const checkBoolean = (param) => checkType(param, "Boolean");
-const checkNumber = (param) => checkType(param, "Number");
-const checkObject = (param) => checkType(param, "Object");
-const checkArray = (param) => checkType(param, "Array");
-const checkString = (param) => checkType(param, "String");
-const checkFunction = (param) => checkType(param, "Function");
-const checkNull = (param) => getType(param) === '[object Null]';
-const checkUndefined = (param) => getType(param) === '[object Undefined]';
+var checkBoolean = (param) => checkType(param, "Boolean");
+var checkNumber = (param) => checkType(param, "Number");
+var checkObject = (param) => checkType(param, "Object");
+var checkArray = (param) => checkType(param, "Array");
+var checkString = (param) => checkType(param, "String");
+var checkFunction = (param) => checkType(param, "Function");
+var checkNull = (param) => getType(param) === '[object Null]';
+var checkUndefined = (param) => getType(param) === '[object Undefined]';
 
-export {
+module.exports = {
     getType,
     // checkType,
     checkBoolean,
@@ -22,5 +22,5 @@ export {
     checkString,
     checkFunction,
     checkNull,
-    checkUndefined
-}
+    checkUndefined,
+};

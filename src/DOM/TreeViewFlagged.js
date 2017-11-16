@@ -1,18 +1,53 @@
 import * as __ from "../Util/ParamCheck";
-import ReplicateTree from "../Structures/TreeReplicator";
+import ReplicateTree from "../Structures/ReplicateTree";
 import * as DOM from "./Elements";
 
 import styles from "./TreeViewFlagged.less";
 
 /*
-TODO:
-  - What to do with skipped nodes, call back to user?
-    if its supposed to be a hidden node its id and data should somehow 
-    be attached to the parent of the skipped node 
+What distinguishes a TreeViewFlagged from a TreeView is that list items
+have a nested and an additional unnested part. The nested part gets its offset by
+the 'padding-left' style of the nested 'li' elements. The 'normal' part
+is positioned absolut with respect to the tree container.
 
-    onItemCreate -> set icon + label, treeview should provide defaults
+nodeInfo = {
+    id, hasChildren, isLastChild, data = { prop1, prop2, ... }
+}
+.tree.li
+    div.nested
+        cell.prop[=id]
+    div.unnested // position absolute, left or right?
+        cell.prop
+        cell.prop
+        ...
 
+TODO: -> args
+  - the decision of what to do with skipped nodes is user domain:
+    user has to provide a callback that will be called with the skipped
+    node and its parent node
+    If no callback is provided, skipped nodes are just ... skipped.
 
+    tree icons and labels are user domain:
+
+    Events: 
+        mgTvOnLock(nodeId): 
+        mgTvOnSelect: send old and new selection
+
+    Flag Icons and their click handler are user domain
+    => pass an array of OnOff-Action structs, actually these are arguments for
+        creating TwoStateButtons(args)
+        [{
+            on: "icon-on",
+            off: "icon-off"
+            action: (on) => {} // boolean is true (= on) or false (= off)
+        },
+        ...
+        ]    
+    if no flags are given TreeViewFlagged will just be a TreeView
+
+    with element.cloneNode() it would be possible that a user provides an array
+    of instantiated ButtonTwoState components for each desired flag, all coming
+    with their click handlers setup.
 */
 
 function toggleFolder(icon) {
@@ -64,9 +99,16 @@ function toggleFlag(args) {
  * e.g. ObjectTree
  * optional filter function (args.skipNode)
  * to react on select -> args.listenTo.mgSelect
+ * 
+ * @param {Object} args
+ * @param {Object} args.container 
+ * @param {Function} args.container.traverse
+ * @param {Function} args.skipNode - node will be skipped if function returns true
+ * @type {HTMLDivElement}
  */
 export default
-function CreateFlaggedTreeView(args) {
+function CreateFlaggedTreeView(args)
+{
     if (__DEBUG__) {
         if (!__.checkObject(args)) {
             console.error("CreateFlaggedTreeView: no arguments provided");
@@ -80,16 +122,21 @@ function CreateFlaggedTreeView(args) {
             console.error("CreateFlaggedTreeView: container has no traverse function");
             return null;
         }
+        if (__.checkObject(args.children)) {
+            console.warn("CreateFlaggedTreeView: a tree has no user defined children");
+        }
     }
 
     if (!__.checkObject(args.listenTo)) args.listenTo = {}
 
-    // creates DOM nodes
-    // Note that you have not to care about tree structure here
-    // all left to do is create a Node from NodeInfo
-    function createNode(parent, nodeInfo) {
-
-        if (!parent) { // its root
+    /** callback for ReplicateTree function
+     * @type {HTMLUListElement|null}
+     */ 
+    function createNode(parent, nodeInfo)
+    {
+        if (!parent) {
+            // its root, note that the nodeInfo param is not evaluated in this case
+            // and we safely omit it for a root node and return a plain UL-element
             return DOM.UnorderedList();
         }
 
@@ -129,7 +176,7 @@ function CreateFlaggedTreeView(args) {
                                 }),
                                 DOM.Span({
                                     class: styles.itemLabel, 
-                                    innerText: nodeInfo.id
+                                    text: nodeInfo.id
                                 }),
                         ]}),
                 ]})
@@ -140,7 +187,8 @@ function CreateFlaggedTreeView(args) {
         if (nodeInfo.hasChildren) {
             ul = DOM.UnorderedList();
 
-            itemArgs.children.push(ul); // appended after .list-item-div, will be parent in the next call
+             // will be parent in the next call
+            itemArgs.children.push(ul);
         }
 
         let child = DOM.ListItem(itemArgs);
@@ -148,23 +196,27 @@ function CreateFlaggedTreeView(args) {
 
         // for leaf nodes this will return null
         // if this node has no children the return value will not be used
-        // otherwise it will be parent in the next call
+        // otherwise the returned "UL" it will be parent in the next call
         return ul;
     }
 
     args.listenTo = {
         click: (ev) => {
-            console.log(ev.target);      
+            console.log(ev.target); 
         }
     }
 
+    /** @type {HTMLUListElement} */
     var root = ReplicateTree({
         container: args.container,
         createNode,
         skipNode: args.skipNode
     });
+    delete args.container;
+    delete args.skipNode;
+
     args.children = [root]; // a tree has no user defined children, only root ul
 
-    let self = DOM.Div(args);
+    let self = DOM.Div(args); // wrap tree in a div
     return self
 };

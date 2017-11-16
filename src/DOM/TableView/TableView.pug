@@ -1,0 +1,19 @@
+//- classes used: .table, .list, .cell, .ruler
+
+mixin cell(content)
+    li: div.cell: span= content
+
+mixin list(title, rows, col)
+    ul.list
+        +cell(title)
+        each row in rows
+            +cell(row[col])
+
+mixin table(data)
+    .table
+        each col, i in data.columns
+            .list-box
+                +list(col, data.rows, i)
+                .ruler
+
++table(data)

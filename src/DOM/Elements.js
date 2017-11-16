@@ -6,6 +6,7 @@ import * as Evt from "./Events";
 const _Element = {
     id: String,
     class: String,
+    style: { "css-rule": "value" },
     type: String,
     props: Object,
     children: [] // of HTMLElement
@@ -13,6 +14,31 @@ const _Element = {
 
 export const genId = () => "id" + Math.random().toString().slice(2);
 export const genClassId = () => "cls" + Math.random().toString().slice(2);
+
+export const checkCreationParams = (args) => {
+    if (!__.checkObject(args)) { throw (`SplitView: no arguments provided`); }
+    if (args.id && !__.checkString(args.id)) { throw ("not a string") }
+    if (args.class && !__.checkString(args.class)) { throw ("not a string") }
+    if (args.attr && !__.checkObject(args.attr)) { throw ("not an object") }
+    if (args.listeners && !__.checkObject(args.listeners)) { throw ("not an object") }
+    if (args.style && !__.checkObject(args.style)) { throw ("not an object") }
+    if (args.children && !__.checkArray(args.children)) { throw ("not an array") }
+    if (args.text) {
+        if (!__.checkString(args.text)) {
+            console.error("Div: text is not a string.");
+        }
+        else if (args.Type === "div") {
+            console.warn("Div: unwrapped text. Children will get omitted.");
+        }
+    }
+    let rest = Object.keys(args).filter(k => !(
+        k == "id" || k == "class" || k == "attr" || k == "Type" || k == "text" ||
+        k == "listeners" || k == "style" || k == "children" || k == "listenTo"
+    ));
+    if (rest.length) {
+        console.warn("redundant properties in args: " + rest.join(", "));
+    }
+}
 
 export const forParents = (elem, untilElem, cb, cbFilter) => {
     let parent = elem;
@@ -36,18 +62,22 @@ export const getParents = (elem, untilElem) => {
     return parents;
 }
 
-export const AppendChildren = (node, children) => {
+export const appendChildren = (node, children) => {
     if (__DEBUG__) {
         if (!(node instanceof Element)) throw Error("node is not an Element");
         if (!__.checkArray(children)) throw Error("children is not an array");
     }
     for (let i = 0; i < children.length; i++) {
         let child = children[i];
-        node.appendChild(child);
+        try {
+            node.appendChild(child);
+        } catch (e){
+            console.error(e.message + ": " + (node.id || node.constructor.name));
+        };
     }
 };
 
-export const ApplyStyle = (node, style) => {
+export const applyStyle = (node, style) => {
     if (__DEBUG__) {
         if (!(node instanceof Element)) {
             throw Error("node is not an Element");
@@ -62,7 +92,7 @@ export const ApplyStyle = (node, style) => {
     });
 };
 
-export const AddClasses = (elem, classStr) => {
+export const addClasses = (elem, classStr) => {
     if (__DEBUG__) {
         if (!(elem instanceof Element)) throw Error("Elements: elem is not an Element");
         if (!__.checkString(classStr)) throw Error("Elements: classStr is not a string");
@@ -72,26 +102,26 @@ export const AddClasses = (elem, classStr) => {
     list.forEach(_class => { elem.classList.add(_class); });
 };
 
-const CopyProps = (elem, props) => {
+const setAttributes = (elem, attrs) => {
     if (__DEBUG__) {
         if (!(elem instanceof Element)) throw Error("Elements: elem is not an Element");
-        if (!__.checkObject(props)) throw Error("Elements: props is not an Object");
+        if (!__.checkObject(attrs)) throw Error("Elements: props is not an Object");
     }
-    Object.keys(props).forEach(prop => {
+    Object.keys(attrs).forEach(attr => {
         if (__DEBUG__) {
-            if (prop === "class" && prop === 'children' && prop === 'style' && prop === 'listenTo') {
-                throw Error("Elements: props should not contain: class|children|style|listenTo")
+            if (attr === "class" && attr === 'children' && attr === 'style' && attr === 'listenTo') {
+                throw Error("Elements: attrs should not contain: class|children|style|listenTo")
             }
         }
         
-        elem[prop] = props[prop];
+        elem[attr] = attrs[attr];
     });
 };
 
-const AddListeners = (elem, listeners) => {
+const addListeners = (elem, listeners) => {
     if (__DEBUG__) {
-        if (!(elem instanceof Element)) throw Error("Elements: noelemde is not an Element");
-        if (!__.checkObject(listeners)) throw Error("Elements: listeners is not an Object");
+        if (!(elem instanceof Element)) throw("Elements: noelemde is not an Element");
+        if (!__.checkObject(listeners)) throw("Elements: listeners is not an Object");
     }
     Object.keys(listeners).forEach(key => {
         elem.addEventListener(key, listeners[key]);
@@ -99,25 +129,34 @@ const AddListeners = (elem, listeners) => {
 };
 
 const Create = (args) => {
+    if (__DEBUG__) { checkCreationParams(args) }
     let elem = document.createElement(args.Type);
+    if(__DEBUG__) {
+        if (elem instanceof HTMLUnknownElement) {
+            throw ("Unknown Element");
+        }
+    }
 
-    if (args.class) AddClasses(elem, args.class); delete args.class;
-    if (args.style) ApplyStyle(elem, args.style); delete args.style;
-    if (args.children) AppendChildren(elem, args.children); delete args.children;
-    if (args.listenTo) AddListeners(elem, args.listenTo); delete args.listenTo;
-    CopyProps(elem, args);
+    if (args.id) elem.id = args.id;
+    if (args.class) addClasses(elem, args.class);
+    if (args.style) applyStyle(elem, args.style);
+    if (args.children) appendChildren(elem, args.children);
+    if (args.listenTo) addListeners(elem, args.listenTo);
+    if (args.attr) setAttributes(elem, args.attr);
+    if (args.text) elem.innerText = args.text;
 
     return elem;
 };
 
+// traverse the DOM via breadth-first and send a "mgMount" message to each element 
 export const mount = () => {
-    // traverse the DOM via breadth-first
     let stack = [document.body];
     let stackIndex = 0;
     let elem;
 
     while (elem = stack[stackIndex]) {
         let children = elem.children;
+        
         for (let i = 0; i < children.length; i++) {
             let child = children.item(i);
             stack.push(child);
@@ -134,23 +173,24 @@ export const mount = () => {
     console.log(`DOM fully loaded and parsed. Elements: ${stackIndex - 1}`);
 };
 
+/**
+ * An App is a function of it's modules
+ */
 export const App = (elem) => {
     document.body.appendChild(elem);
     
-    // if (args.class) AddClasses(elem, args.class); delete args.class;
-    // if (args.style) ApplyStyle(elem, args.style); delete args.style;
-    // if (args.children) AppendChildren(elem, args.children); delete args.children;
-    // if (args.listenTo) AddListeners(elem, args.listenTo); delete args.listenTo;
-    // CopyProps(elem, args);
+    // if (args.class) addClasses(elem, args.class); delete args.class;
+    // if (args.style) applyStyle(elem, args.style); delete args.style;
+    // if (args.children) appendChildren(elem, args.children); delete args.children;
+    // if (args.listenTo) addListeners(elem, args.listenTo); delete args.listenTo;
+    // copyProps(elem, args);
 
-    document.addEventListener("DOMContentLoaded", mount);
+    document.addEventListener("DOMContentLoaded", mount, false);
 };
 
 export const Div = (args) => {
-    let _args = args || {};
-    _args.Type = 'div';
-
-    return Create(_args);
+    args.Type = 'div';
+    return Create(args);
 };
 export const Group = Div;
 
@@ -211,19 +251,19 @@ export const TextArea = (args) => {
 };
 
 export const ListItem = (args) => {
-    if(__DEBUG__) if(!__.checkObject(args)) args = {};
+    if(!__.checkObject(args)) args = {};
     args.Type = 'li';
     return Create(args);
 };
 
 export const OrderedLists = (args) => {
-    if (__DEBUG__) if (!__.checkObject(args)) args = {};
+    if (!__.checkObject(args)) args = {};
     args.Type = 'ol';
     return Create(args);
 };
 
 export const UnorderedList = (args) => {
-    if (__DEBUG__) if (!__.checkObject(args)) args = {};
+    if (!__.checkObject(args)) args = {};
 
     args.Type = 'ul';
     return Create(args);

@@ -1,6 +1,6 @@
 import { checkBoolean, checkObject } from "../Util/ParamCheck";
 import { split } from "./Split";
-import { Div } from "./Elements";
+import { Div, checkCreationParams } from "./Elements";
 import * as Evt from "./Events";
 
 // @ts-ignore
@@ -20,6 +20,8 @@ let _TypeV = styles["v"];
 const _Create = (args) => {
     _args = args;
     
+    if (__DEBUG__) checkCreationParams(args)
+
     // this listener has to be added to the creation args (!)
     if (!checkObject(args.listenTo)) args.listenTo = {};
     args.listenTo["mgMount"] = function(ev) {

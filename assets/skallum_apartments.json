@@ -1,0 +1,10 @@
+/**
+ Export to JSON plugin for PHPMyAdmin
+ @version 0.1
+ */
+
+// Database 'bv2'
+
+// bv2.skallum_apartments
+
+[{"id":"1","house_id":"1","name":"10","title":"Hus 1","rooms":"2","bra":"1050","floor":"0","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}, {"id":"2","house_id":"1","name":"20","title":"Hus 2","rooms":"2","bra":"1182","floor":"0","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}, {"id":"3","house_id":"1","name":"30","title":"Hus 3","rooms":"2","bra":"1321","floor":"0","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}, {"id":"4","house_id":"1","name":"40","title":"Hus 4","rooms":"2","bra":"1079","floor":"0","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}, {"id":"5","house_id":"1","name":"50","title":"Hus 5","rooms":"2","bra":"1179","floor":"0","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}, {"id":"6","house_id":"1","name":"60","title":"Hus 6","rooms":"2","bra":"1098","floor":"1","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}, {"id":"7","house_id":"1","name":"70","title":"Hus 7","rooms":"2","bra":"985","floor":"1","proom":"46","balcony":"8","garage":"Kan kj\u00f8pes","price":"10990000","is_available":"1","status":"ledig","text":null,"floorplan":null,"expose":null,"views":null,"click_count":"0"}]
