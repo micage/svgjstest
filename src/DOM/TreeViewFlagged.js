@@ -5,49 +5,49 @@ import * as DOM from "./Elements";
 import styles from "./TreeViewFlagged.less";
 
 /*
-What distinguishes a TreeViewFlagged from a TreeView is that list items
-have a nested and an additional unnested part. The nested part gets its offset by
-the 'padding-left' style of the nested 'li' elements. The 'normal' part
-is positioned absolut with respect to the tree container.
+    What distinguishes a TreeViewFlagged from a TreeView is that list items
+    have a nested and an additional unnested part. The nested part gets its offset by
+    the 'padding-left' style of the nested 'li' elements. The 'normal' part
+    is positioned absolut with respect to the tree container.
 
-nodeInfo = {
-    id, hasChildren, isLastChild, data = { prop1, prop2, ... }
-}
-.tree.li
-    div.nested
-        cell.prop[=id]
-    div.unnested // position absolute, left or right?
-        cell.prop
-        cell.prop
-        ...
+    nodeInfo = {
+        id, hasChildren, isLastChild, data = { prop1, prop2, ... }
+    }
+    .tree.li
+        div.nested
+            cell.prop[=id]
+        div.unnested // position absolute, left or right?
+            cell.prop
+            cell.prop
+            ...
 
-TODO: -> args
-  - the decision of what to do with skipped nodes is user domain:
-    user has to provide a callback that will be called with the skipped
-    node and its parent node
-    If no callback is provided, skipped nodes are just ... skipped.
+    TODO: -> args
+    - the decision of what to do with skipped nodes is user domain:
+        user has to provide a callback that will be called with the skipped
+        node and its parent node
+        If no callback is provided, skipped nodes are just ... skipped.
 
-    tree icons and labels are user domain:
+        tree icons and labels are user domain:
 
-    Events: 
-        mgTvOnLock(nodeId): 
-        mgTvOnSelect: send old and new selection
+        Events: 
+            mgTvOnLock(nodeId): 
+            mgTvOnSelect: send old and new selection
 
-    Flag Icons and their click handler are user domain
-    => pass an array of OnOff-Action structs, actually these are arguments for
-        creating TwoStateButtons(args)
-        [{
-            on: "icon-on",
-            off: "icon-off"
-            action: (on) => {} // boolean is true (= on) or false (= off)
-        },
-        ...
-        ]    
-    if no flags are given TreeViewFlagged will just be a TreeView
+        Flag Icons and their click handler are user domain
+        => pass an array of OnOff-Action structs, actually these are arguments for
+            creating TwoStateButtons(args)
+            [{
+                on: "icon-on",
+                off: "icon-off"
+                action: (on) => {} // boolean is true (= on) or false (= off)
+            },
+            ...
+            ]    
+        if no flags are given TreeViewFlagged will just be a TreeView
 
-    with element.cloneNode() it would be possible that a user provides an array
-    of instantiated ButtonTwoState components for each desired flag, all coming
-    with their click handlers setup.
+        with element.cloneNode() it would be possible that a user provides an array
+        of instantiated ButtonTwoState components for each desired flag, all coming
+        with their click handlers setup.
 */
 
 function toggleFolder(icon) {
@@ -140,12 +140,13 @@ function CreateFlaggedTreeView(args)
             return DOM.UnorderedList();
         }
 
-        // create list item content
+        // create tree node with associated flags
         let itemArgs = {
             children: [
                 DOM.Div({
                     class: styles["list-item-box"],
                     children:[
+                        // flag icons
                         DOM.Div({
                             class: styles["list-item-flags"],
                             children: [                             // this should be dynamic
@@ -162,6 +163,7 @@ function CreateFlaggedTreeView(args)
                                     }
                                 })
                         ]}),
+                        // tree node
                         DOM.Div({
                             class: styles["list-item-div"],
                             children: [

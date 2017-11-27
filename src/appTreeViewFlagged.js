@@ -1,11 +1,15 @@
 import * as __ from "./Util/ParamCheck";
 import * as DOM from "./DOM/Elements";
+import * as SVG from "./svg/Elements";
 import ObjectTree from "./Structures/ObjectTree";
 import { NodePrinter } from "./Structures/ObjectTree";
 import * as Obs from "./Structures/Observable";
 import ReplicateTree from "./Structures/ReplicateTree";
 import SplitView from "./DOM/SplitView";
 import TreeViewFlagged from "./DOM/TreeViewFlagged";
+import Icon from "./svg/Icon";
+
+import Button from "./DOM/Button";
 
 import styles from "./appTreeViewFlagged.less";
 import "../fonts/icomoon/style.css"; // icomoon svg font
@@ -70,6 +74,7 @@ var objTree = new ObjectTree(test2);
 
 // view
 var views = {
+    tvOriginal: null,
     tvFiltered: null
 };
 
@@ -133,6 +138,7 @@ if(1) {
                         // one, original tree
                         DOM.Div({
                             class: styles.one, children: [
+                                // header
                                 DOM.Div({
                                     class: styles.viewHeader,
                                     children: [
@@ -142,7 +148,6 @@ if(1) {
                                                 DOM.Span({ text: "id.contains:" }),
                                                 DOM.Input({
                                                     id: "xxx",
-                                                    value: condition.value,
                                                     class: styles.condition,
                                                     listenTo: {
                                                         change: (ev) => { condition.value = ev.target.value; }
@@ -152,7 +157,61 @@ if(1) {
                                         })
                                     ]
                                 }),
-                                TreeViewFlagged({
+                                // tool-bar
+                                DOM.Div({
+                                    class: styles['tool-bar'],
+                                    children: [
+                                        // DOM.Span({
+                                        //     // text: "create",
+                                        //     class: styles['button'],
+                                        //     listenTo: {
+                                        //         click: (ev) => {                                                    
+                                        //             console.log("clicked create: " + ev.target.className);
+                                        //         }
+                                        //     },
+                                        //     children: [Icons.star8]
+                                        // }),
+                                        // DOM.Span({
+                                        //     class: styles['button'],
+                                        //     listenTo: {
+                                        //         click: () => {
+                                        //             console.log("clicked delete");
+                                        //         }
+                                        //     },
+                                        //     children: [Icons.recycleBin]
+                                        // }),
+                                        Button({
+                                            id: "button" + DOM.genId(),
+                                            iconName: "clipboard",
+                                            action: (elem) => {
+                                                console.log("Toot " + elem.id)
+                                            }
+                                        }),
+                                        Button({
+                                            id: "button" + DOM.genId(),
+                                            iconName: "circleUp",
+                                            action: (elem) => {
+                                                console.log("Toot " + elem.id)
+                                            }
+                                        }),
+                                        Button({
+                                            id: "button" + DOM.genId(),
+                                            iconName: "arrowUp",
+                                            action: (elem) => {
+                                                console.log("Toot " + elem.id)
+                                            }
+                                        }),
+                                        Button({
+                                            id: "button" + DOM.genId(),
+                                            iconName: "starEmpty",
+                                            action: (elem) => {
+                                                console.log("Toot " + elem.id)
+                                            }
+                                        })
+                                    ]
+                                }),
+                                // tree-view
+                                views.tvOriginal = TreeViewFlagged({
                                     class: styles.tree, container: objTree
                                 }),
                             ]
@@ -160,12 +219,14 @@ if(1) {
                         // two, filtered tree
                         DOM.Div({
                             class: styles.two, children: [
+                                // header
                                 DOM.Div({
                                     class: styles.viewHeader,
                                     children: [
                                         DOM.Span({ class: styles["col-header"], text: "Filtered Tree" })
                                     ]
                                 }),
+                                // tree-view
                                 views.tvFiltered = TreeViewFlagged({
                                     class: styles.tree, container: objTree
                                 }),

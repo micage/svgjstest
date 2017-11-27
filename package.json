@@ -1,7 +1,7 @@
 {
   "name": "svg_js_test",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "main.js",
   "directories": {
     "test": "tests"
   },
@@ -12,6 +12,8 @@
   "scripts": {
     "vec": "webpack-dev-server --config webpack-dev.config.js --progress --colors",
     "vec+": "webpack --config webpack-vec-pro.config.js --progress --colors",
+    "explorer": "webpack-dev-server --config webpack-explorer.config.js --progress --colors",
+    "explorer+": "webpack-dev-server --config webpack-explorer.config.js --progress --colors",
     "tree": "webpack-dev-server --config webpack-tree.config.js --progress --colors",
     "tree+": "webpack --config webpack-tree-pro.config.js",
     "table": "webpack-dev-server --config webpack-table.config.js --progress --colors",

@@ -1,15 +1,15 @@
 import * as __ from "../Util/ParamCheck";
 
 /* Manifesto
-Maybe this the point where the buzzword "immutability" comes into play.
+Maybe this is the point where the buzzword "immutability" comes into play.
 An observable can only detect changes to it's value. If properties
 inside an object are changed the reference stays the same. So the value
 of the observable will not change, hence no listener will be called.
+That is not good.
 
-But replacing a complete structure, just that the observable will
-detect a change is a ridiculous waste of CPU usage. And the waste
-increases with the size of the structure that has been changed.
-(-> react, and their 'oppinionated' immutability bla bla)
+But replacing a complete and possibly huge structure, such that the 
+observable will detect a change seems to be an overkill.
+(-> plz see facebooks react, and their 'oppinionated' immutability bla bla)
 
 We can provide specialized observables for complex datatypes - 
 like ObservableArray, ObservableTree. 
@@ -21,7 +21,7 @@ Instead we have to call functions which alter a member of the container
 and inform the listener which member has changed. 
 ObservableTree for example would act as a proxy to a "real" 
 tree. This approach makes it easy not only to detect changes but also 
-exactly what has changed.
+know exactly what has changed.
 */
 
 /**
@@ -147,9 +147,10 @@ var ObservableArray = function (arr, listener) {
     this._arr = arr;
 }
 
-ObservableArray.prototype = Object.create(Observable.prototype, {
-    /** @param {Number} index - will be inserted at the end
-     *  @return {*} value at index
+ObservableArray.prototype = Object.create(Observable.prototype, 
+{
+    /** @param {Number} index - will be removed
+     *  @return {*} value at position index
      */
     remove: {
         value: function(index) {

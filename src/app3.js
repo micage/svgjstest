@@ -11,7 +11,7 @@ var testData = {
     ]
 };
 
-const url1 = "http://micage.mmm/mmm/svgjs_test/www/php/get_table.php";
+const url1 = "http://micage.mmm/mmm/svgjs_test/www/api/get_table.php";
 
 
 db.loadTable(url1).then(
