@@ -1,13 +1,11 @@
 import * as __ from "./Util/ParamCheck";
 import * as DOM from "./DOM/Elements";
-import * as SVG from "./svg/Elements";
 import ObjectTree from "./Structures/ObjectTree";
-import { NodePrinter } from "./Structures/ObjectTree";
+// import { NodePrinter } from "./Structures/ObjectTree";
 import * as Obs from "./Structures/Observable";
-import ReplicateTree from "./Structures/ReplicateTree";
+// import ReplicateTree from "./Structures/ReplicateTree";
 import SplitView from "./DOM/SplitView";
 import TreeViewFlagged from "./DOM/TreeViewFlagged";
-import Icon from "./svg/Icon";
 
 import Button from "./DOM/Button";
 

@@ -10,5 +10,7 @@
 5. the creation argument is the interface to the component
 
 6. calling function on a component goes via 
-    a. sending a custom event (return values?) trigger -> listenTo
-    b. a collection of function objects
+    a. sending a custom event (return values?): trigger -> listenTo
+    b. a collection of function objects stored inside the DOM-Element (unclean)
+        e.g. listElement.mmm.onClick = (ev) => {}, mmm is my private namespace.
+        a cleaner method would be using the data mechanism (clumsy)
