@@ -1,5 +1,6 @@
 ### What is it?
-Two things. First a test run for a Vector2 class using svg.js for displaying vectors as [SVGLineElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGLineElement)s and second a tree replication function.
+This is my test area for developing component-based apps.
+Look inside [package.json](https://github.com/micage/svgjstest/blob/master/package.json) -> scripts to see what you can do.
 
 ### Installing
 Go to a directory of your choice
@@ -13,8 +14,6 @@ Install dependencies:
 ```
 npm i
 ```
-
-2. 
 
 #### Vector2 Test
 Start devserver on port 3014 -> localhost:3014
