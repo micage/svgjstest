@@ -1,6 +1,6 @@
-import TableView from "./DOM/TableView/TableView";
-import * as DOM from "./DOM/Elements";
-import * as Db from "./DataBase/Table";
+import TableView from "../../DOM/TableView/TableView";
+import * as DOM from "../../DOM/Elements";
+import * as Db from "../../DataBase/Table";
 
 //let table = TableView({ data: {} });
 //document.body.appendChild(table);
@@ -14,7 +14,8 @@ let args = {
     url: "http://mmm-api.mmm/api", // does not work anymore, configure routes first!
     // url: "http://mmm-api.mmm/php/",
     // db: "SVG", table: "Path",
-    db: "bv2", table: "glomma_apartments",
+    // db: "bv2", table: "glomma_apartments",
+    db: "bv2", table: "ringnespark_apartments",
     // db: "bv2", table: "skallum_apartments",
     // db: "relay", table: "people",
 };

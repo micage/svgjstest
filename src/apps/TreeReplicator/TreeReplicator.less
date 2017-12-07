@@ -1,6 +1,5 @@
 @split-view-height: 300px;
-@header-height: 20px;
-@dummy: 24px;
+@header-height: 50px;
 @tool-bar-height: 24px;
 
 html {
@@ -16,14 +15,40 @@ html {
     // .one, .bar, .two 
     > * {
         overflow-y: hidden;
+        .tree {
+            > :first-child {
+                padding: 0;
+                position: relative;
+                margin-left: -16px;
+                margin-top: 6px;
+            }
+            height: @split-view-height - @header-height - @tool-bar-height;
+            // overflow-x: hidden;
+            overflow-y: auto;
+
+            ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            li {
+                margin:0;
+                padding: 0; 
+                padding-left: 20px;
+            }
+        }
     }
 }
 
+.condition {
+    width: 200px;
+}
+
 .viewHeader {
-    // height: @header-height;
+    height: @header-height;
     padding: 8px;
     border-bottom: 1px solid #ccc;
-    background-color: #f4f4f4;
+    background-color: #eee;
     text-overflow: clip;
     // white-space: nowrap;
     pre {
@@ -39,33 +64,6 @@ html {
         font-size: 18px;
         margin-bottom: 4px;
     }
-}
-
-.tree {
-    > :first-child {
-        padding: 0;
-        position: relative;
-        margin-left: -16px;
-        margin-top: 6px;
-    }
-    height: @split-view-height - @header-height - @tool-bar-height - @dummy;
-    // overflow-x: hidden;
-    overflow-y: auto;
-
-    ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-    li {
-        margin:0;
-        padding: 0; 
-        padding-left: 20px;
-    }
-}
-
-.node-viewer {
-    
 }
 
 .tool-bar {
@@ -92,7 +90,7 @@ html {
 }
 
 .list-item-div {
-    padding-left: 100%; // trick 17
+    padding-left: 100%;
     margin-left: -100%;
     cursor: default;
     &:hover {
@@ -119,6 +117,3 @@ html {
     }
 }
 
-.status-bar {
-
-}

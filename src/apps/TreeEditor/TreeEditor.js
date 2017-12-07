@@ -1,17 +1,16 @@
-import * as __ from "./Util/ParamCheck";
-import * as DOM from "./DOM/Elements";
-import ObjectTree from "./Structures/ObjectTree";
+import * as __ from "../../Util/ParamCheck";
+import * as DOM from "../../DOM/Elements";
+import ObjectTree from "../../Structures/ObjectTree";
 // import { NodePrinter } from "./Structures/ObjectTree";
-import * as Obs from "./Structures/Observable";
+import * as Obs from "../../Structures/Observable";
 // import ReplicateTree from "./Structures/ReplicateTree";
-import SplitView from "./DOM/SplitView";
-import TreeViewFlagged from "./DOM/TreeViewFlagged";
+import SplitView from "../../DOM/SplitView";
+import TreeViewFlagged from "../../DOM/TreeViewFlagged";
+import Button from "../../DOM/Button";
 
-import Button from "./DOM/Button";
-
-import styles from "./appExplorer.less";
-import "../fonts/icomoon/style.css"; // icomoon svg font
-// const icons = require("../fonts/style.css"); // icomoon svg font
+// local imports
+import styles from "./TreeEditor.less";
+import "../../../fonts/icomoon/style.css"; // icomoon svg font
 
 if (__DEBUG__) console.log("Debug Mode");
 
@@ -77,7 +76,7 @@ const createApp = () => {
                                 children: [
                                     DOM.Div({
                                         children: [
-                                            DOM.Span({ class: styles["col-header"], text: "Tree Diver" }),
+                                            DOM.Span({ class: styles["col-header"], text: "Tree View" }),
                                         ]
                                     })
                                 ]

@@ -1,11 +1,14 @@
 @split-view-height: 300px;
-@header-height: 50px;
-@dummy: 20px;
+@header-height: 24px;
+@dummy: 24px;
 @tool-bar-height: 24px;
+@text-color: #444;
 
 html {
+    color: @text-color;
     font-family: sans-serif;
 }
+
 .SplitView {
     user-select: none;
     white-space: nowrap;
@@ -16,40 +19,14 @@ html {
     // .one, .bar, .two 
     > * {
         overflow-y: hidden;
-        .tree {
-            > :first-child {
-                padding: 0;
-                position: relative;
-                margin-left: -16px;
-                margin-top: 6px;
-            }
-            height: @split-view-height - @header-height - @tool-bar-height - @dummy;
-            // overflow-x: hidden;
-            overflow-y: auto;
-
-            ul {
-                margin: 0;
-                padding: 0;
-                list-style: none;
-            }
-            li {
-                margin:0;
-                padding: 0; 
-                padding-left: 20px;
-            }
-        }
     }
 }
 
-.condition {
-    width: 200px;
-}
-
 .viewHeader {
-    height: @header-height;
+    // height: @header-height;
     padding: 8px;
     border-bottom: 1px solid #ccc;
-    background-color: #eee;
+    background-color: #f4f4f4;
     text-overflow: clip;
     // white-space: nowrap;
     pre {
@@ -65,6 +42,10 @@ html {
         font-size: 18px;
         margin-bottom: 4px;
     }
+}
+
+.node-viewer {
+    
 }
 
 .tool-bar {
@@ -90,8 +71,31 @@ html {
     }
 }
 
+.tree {
+    > :first-child {
+        padding: 0;
+        position: relative;
+        margin-left: -16px;
+        margin-top: 6px;
+    }
+    height: @split-view-height - @header-height - @tool-bar-height - @dummy;
+    // overflow-x: hidden;
+    overflow-y: auto;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    li {
+        margin:0;
+        padding: 0; 
+        padding-left: 20px;
+    }
+}
+
 .list-item-div {
-    padding-left: 100%;
+    padding-left: 100%; // trick 17
     margin-left: -100%;
     cursor: default;
     &:hover {
@@ -118,3 +122,7 @@ html {
     }
 }
 
+.status-bar {
+    height: 24px;
+    border: 1px solid #ccc;
+}

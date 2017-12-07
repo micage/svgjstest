@@ -4,6 +4,8 @@ import * as DOM from "./Elements";
 
 import styles from "./TreeViewFlagged.less";
 
+const file = "TreeViewFlagged.js >> "; // for logging only
+
 /*
     What distinguishes a TreeViewFlagged from a TreeView is that list items
     have a nested and an additional unnested part. The nested part gets its offset by
@@ -48,6 +50,25 @@ import styles from "./TreeViewFlagged.less";
         with element.cloneNode() it would be possible that a user provides an array
         of instantiated ButtonTwoState components for each desired flag, all coming
         with their click handlers setup.
+
+    Events that lead to a change of data:
+    change: 
+    input: validate, if it's ok take it, otherwise don't, the validate function is
+            user domain: validate = String => Boolean;
+
+    How to associate a ListItem of the TreeView with a node from the data tree?
+    Way 1: climb up the DOM until is reaches the root of the tree
+            concatanate each nodes id using a path separator e.g. '/'.
+            With this full path name we can call 
+            ObservableTree.modifyNodeName(fullPath, newName);
+
+    What is a TreeView capable of?
+        create, triggered by a button (what kind of node? classes?),
+            sends a message to create a node to ObservableTree
+        modify, triggered by change event 
+        delete, triggered by button or key
+        cut, copy, paste, triggered by key (STRG-X, STRG-C, STRG-V)
+        select, triggered by click
 */
 
 function toggleFolder(icon) {
@@ -94,16 +115,151 @@ function toggleFlag(args) {
     }
 }
 
+function onClickNode(ev) {
+    // clicked node becomes the 'selected' one
+    console.log(file + 'target: ' + ev.target + ', currentTarget: ' + ev.currentTarget);
+}
+
 /**
- * Creates a tree from a container that traverses over NodeInfo structs
- * e.g. ObjectTree
- * optional filter function (args.skipNode)
+ * @private
+ */
+function onNodeLabelDblClick(ev) {
+    console.log(file + 'dblclick -> target: ' + ev.target + ', currentTarget: ' + ev.currentTarget);
+    let label = ev.currentTarget;
+    let parent = label.parentNode;
+
+    // change label to an editable text field, CHK: weird DOM-Exceptions
+    let input = DOM.Input({
+        attr: {
+            defaultValue: label.innerText
+        },
+        listenTo: {
+            change: (ev) => {
+                let text = input.value;
+                label.innerText = text;
+                console.log('Label changed');
+
+                try { parent.replaceChild(label, input) } catch (e) {}
+            },
+            keyup: (ev) => { 
+                if (ev.keyCode == 27) {
+                    input.value = label.innerText;
+                    console.log('cancel input: ' + input.value);
+                    try { parent.replaceChild(label, input) } catch (e) { }
+                }
+                else if (ev.keyCode == 13) {
+                    console.log('accept input: ' + input.value);
+                    try { parent.replaceChild(label, input) } catch (e) { }
+                }             
+            },
+            focusout: (ev) => {
+                try { parent.replaceChild(label, input) } catch (e) { }
+            }
+        }
+    });
+
+    parent.replaceChild(input, label);
+    input.focus();
+}
+
+/** 
+ * callback for ReplicateTree function
+ * @private
+ * @type {HTMLUListElement|null}
+ * @param {HTMLUListElement|null} parent
+ * @param {Object|null} nodeInfo
+ * @param {String} nodeInfo.id
+ * @param {Boolean} nodeInfo.hasChildren
+ */
+function createNode(parent, nodeInfo) {
+    if (!parent) {
+        // a node without a parent is the root of the tree
+        // note that the nodeInfo param is not evaluated in this case
+        // and we just return a plain UL-element
+        return DOM.UnorderedList();
+    }
+
+    // create tree node with associated flags
+    let itemArgs = {
+        children: [
+            DOM.Div({
+                class: styles["list-item-box"],
+                listenTo: {
+                    click: (ev) => onClickNode(ev)
+                },
+                children: [
+                    // flag icons
+                    DOM.Div({
+                        class: styles["list-item-flags"],
+                        children: [                             // this should be dynamic
+                            DOM.Span({
+                                class: "icon-eye " + styles.icon,
+                                listenTo: {
+                                    click: (ev) => toggleEye(ev.target)
+                                }
+                            }),
+                            DOM.Span({
+                                class: "icon-lock " + styles.icon,
+                                listenTo: {
+                                    click: (ev) => toggleLock(ev.target)
+                                }
+                            })
+                        ]
+                    }),
+                    // tree node
+                    DOM.Div({
+                        class: styles["list-item-div"],
+                        children: [
+                            DOM.Span({
+                                class: [
+                                    nodeInfo.hasChildren ? "icon-folder-open" : "icon-minus",
+                                    styles.icon
+                                ].join(" "),
+                                listenTo: {
+                                    click: (ev) => toggleFolder(ev.target)
+                                }
+                            }),
+                            DOM.Span({
+                                class: styles.itemLabel,
+                                text: nodeInfo.id,
+                                listenTo: {
+                                    dblclick: (ev) => onNodeLabelDblClick(ev)
+                                }
+                            }),
+                        ]
+                    }),
+                ]
+            })
+        ]
+    };
+
+    let ul = null;
+
+    if (nodeInfo.hasChildren) {
+        ul = DOM.UnorderedList();
+
+        // ul will be parent in the next call of createNode
+        itemArgs.children.push(ul);
+    }
+
+    let child = DOM.ListItem(itemArgs);
+    parent.appendChild(child);
+
+    // for leaf nodes this will return null
+    // if this node has no children the return value will not be used
+    // otherwise the returned "UL" it will be parent in the next call
+    return ul;
+}
+
+/**
+ * Creates a DOM-Tree by traversing a tree using ReplicateTree
+ * The tree has to provide a traverse function: see ObjectTree.js for details
+ * optional filter function (args.skipNode): nodeInfo => boolean
  * to react on select -> args.listenTo.mgSelect
  * 
  * @param {Object} args
- * @param {Object} args.container 
- * @param {Function} args.container.traverse
- * @param {Function} args.skipNode - node will be skipped if function returns true
+ * @param {Object} args.container - needs to have a traverse function
+ * @param {Function} [args.skipNode] - optional, node will be skipped if function returns true
  * @type {HTMLDivElement}
  */
 export default
@@ -123,88 +279,18 @@ function CreateFlaggedTreeView(args)
             return null;
         }
         if (__.checkObject(args.children)) {
-            console.warn("CreateFlaggedTreeView: a tree has no user defined children");
+            console.warn("CreateFlaggedTreeView: a tree has no user defined children, ignoring");
         }
     }
 
-    if (!__.checkObject(args.listenTo)) args.listenTo = {}
+    // if (!__.checkObject(args.listenTo)) args.listenTo = {} // CHK!
 
-    /** callback for ReplicateTree function
-     * @type {HTMLUListElement|null}
-     */ 
-    function createNode(parent, nodeInfo)
-    {
-        if (!parent) {
-            // its root, note that the nodeInfo param is not evaluated in this case
-            // and we safely omit it for a root node and return a plain UL-element
-            return DOM.UnorderedList();
-        }
-
-        // create tree node with associated flags
-        let itemArgs = {
-            children: [
-                DOM.Div({
-                    class: styles["list-item-box"],
-                    children:[
-                        // flag icons
-                        DOM.Div({
-                            class: styles["list-item-flags"],
-                            children: [                             // this should be dynamic
-                                DOM.Span({
-                                    class: "icon-eye " + styles.icon,
-                                    listenTo: {
-                                        click: (ev) => toggleEye(ev.target)
-                                    }
-                                }),
-                                DOM.Span({
-                                    class: "icon-lock " + styles.icon,
-                                    listenTo: {
-                                        click: (ev) => toggleLock(ev.target)
-                                    }
-                                })
-                        ]}),
-                        // tree node
-                        DOM.Div({
-                            class: styles["list-item-div"],
-                            children: [
-                                DOM.Span({
-                                    class: [
-                                        nodeInfo.hasChildren ? "icon-folder-open" : "icon-minus",
-                                        styles.icon
-                                    ].join(" "),
-                                    listenTo: {
-                                        click: (ev) => toggleFolder(ev.target)
-                                    }
-                                }),
-                                DOM.Span({
-                                    class: styles.itemLabel, 
-                                    text: nodeInfo.id
-                                }),
-                        ]}),
-                ]})
-        ]};
-
-        let ul = null;
-
-        if (nodeInfo.hasChildren) {
-            ul = DOM.UnorderedList();
-
-             // will be parent in the next call
-            itemArgs.children.push(ul);
-        }
-
-        let child = DOM.ListItem(itemArgs);
-        parent.appendChild(child);
-
-        // for leaf nodes this will return null
-        // if this node has no children the return value will not be used
-        // otherwise the returned "UL" it will be parent in the next call
-        return ul;
-    }
-
-    args.listenTo = {
-        click: (ev) => {
-            console.log(ev.target); 
+    if (__DEBUG__) {
+        // console log what has been clicked
+        args.listenTo = {
+            click: (ev) => {
+                console.log(ev.target); 
+            }
         }
     }
 

@@ -25,6 +25,8 @@ if (__DEBUG__) {
   @property {boolean} isLastChild
  */
 
+ // CAUTION - this usus a pre-order traveral
+
 /**
  * @callback CreateNodeCb
  * @param { Node } parent - if !parent, create root, Node can be anything

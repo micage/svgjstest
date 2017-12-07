@@ -1,5 +1,7 @@
 import * as __ from "../Util/ParamCheck";
 
+const file = "Table.js::"
+
 /** Load a table from a mysql database
     @param {string} - the url of the php script that connects to mysql
     @param {string} - database name
@@ -17,6 +19,7 @@ import * as __ from "../Util/ParamCheck";
  */
 const loadTable = (args) => {
     if (__DEBUG__) {
+        const func = "loadTable: ";
         let error = [];
         if (!__.checkObject(args)) {
             error.push("No arguments provided.");
@@ -34,7 +37,7 @@ const loadTable = (args) => {
         }
         if (error.length) {
             // return an immediately rejected promise
-            return new Promise((ok, reject) => { reject({ error: error.join(", ")}); });
+            return new Promise((ok, reject) => { reject({ error: file + func + error.join(", ")}); });
         }
     }
 

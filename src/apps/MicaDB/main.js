@@ -1,5 +1,5 @@
-import Adress from './DataBase/Address';
-import DB from './DataBase/FakeDB';
+import Adress from '../../DataBase/Address';
+import DB from '../../DataBase/FakeDB';
 
 let addresses = [];
 

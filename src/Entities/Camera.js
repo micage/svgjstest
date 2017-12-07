@@ -41,7 +41,7 @@ class Camera {
         
         // this has to come from a frame stack
         // and should contain a model to world transformation
-        // in the absence of a hierarchy this boils down to be 
+        // in absence of a hierarchy this boils down to be 
         // the identity
         let wtm = null;
         

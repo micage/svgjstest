@@ -1,12 +1,12 @@
-import Vector2 from "./Math/Vector2";
-import Vector3 from "./Math/Vector3";
-import Frame from "./Entities/Frame";
-import Camera from "./Entities/Camera";
-import * as DOM from "./DOM/Elements";
-import { SVG, Group, Circle, Rect, Path } from "./SVG/Elements";
-import * as Evt from "./DOM/Events";
-import ScrollBar from "./DOM/ScrollBar";
-import * as Obs from "./Structures/Observable";
+import Vector2 from "../../Math/Vector2";
+import Vector3 from "../../Math/Vector3";
+import Frame from "../../Entities/Frame";
+import Camera from "../../Entities/Camera";
+import * as DOM from "../../DOM/Elements";
+import { SVG, Group, Circle, Rect, Path } from "../../SVG/Elements";
+import * as Evt from "../../DOM/Events";
+import ScrollBar from "../../DOM/ScrollBar";
+import * as Obs from "../../Structures/Observable";
 // import SVG from "svg.js";
 
 // ======================================================================

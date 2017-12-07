@@ -1,14 +1,14 @@
-
+@text-color: #444;
 @spHeight: 300px;
 @spHeaderHeight: 50px;
-@strange: 20px;
 @icon-width: 20px;
 @item-height: 20px;
 @shift: 200px; // has to be enough, else increase it
 @num-flags: 3;
 
+// this is the complete line (flag icons + node icon + node label)
+// using the padding/margin trick
 .list-item-box {
-    color: green;
     padding-left: @shift + @icon-width * @num-flags;
     margin-left: -@shift;
     user-select: none;
@@ -21,6 +21,8 @@
         background-color: #fed;
     }
 }
+
+// wrapper for flag icons (e.g. locked/hidden)
 .list-item-flags {
     position: absolute;
     left: @icon-width;
@@ -34,18 +36,22 @@
         
     }
 }
+
+// wrapper for node icon and label
 .list-item-div {
     padding-left: 4px;
     .icon {
-        color: #dcc;
+        color: hsl(200, 60%, 75%);
         // cursor: pointer;
     }
     .itemLabel {
+        color: @text-color;
         display: inline-block;
         padding-left: 6px;
     }
 }
 
+// the treeview (this here component)
 .tree {
     > :first-child {
         padding: 0;
@@ -53,19 +59,17 @@
         margin-left: -16px;
         margin-top: 6px;
     }
-    height: @spHeight - @spHeaderHeight - @strange;
+    height: @spHeight - @spHeaderHeight + 1px;
     // overflow-x: hidden;
     overflow-y: auto;
 
-    ul {
+    ul, li {
         margin: 0;
         padding: 0;
         list-style: none;
     }
     li {
-        margin:0;
-        padding: 0; 
         padding-left: 20px;
-        white-space:nowrap;
+        white-space: nowrap;
     }
 }

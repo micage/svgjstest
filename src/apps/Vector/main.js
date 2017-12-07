@@ -1,5 +1,5 @@
 import CreateApp from "./appVector2Test";
-import { App, mount } from "./DOM/Elements";
+import { App, mount } from "../../DOM/Elements";
 
 let app = CreateApp();
 App(app);
