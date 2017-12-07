@@ -10,16 +10,16 @@
     "url": "git+ssh://git@github.com:micage/svgjstest.git"
   },
   "scripts": {
-    "vector": "webpack-dev-server --config _configs/webpack-vector-dev.config.js --progress --colors",
-    "vector+": "webpack           --config _configs/webpack-vector-pro.config.js",
-    "tree-ed": "webpack-dev-server --config _configs/webpack-tree-ed-dev.config.js --progress --colors",
-    "tree-ed+": "webpack           --config _configs/webpack-tree-ed-pro.config.js",
-    "tree": "webpack-dev-server --config _configs/webpack-tree-dev.config.js --progress --colors",
-    "tree+": "webpack           --config _configs/webpack-tree-pro.config.js",
-    "table": "webpack-dev-server --config _configs/webpack-table-dev.config.js --progress --colors",
-    "table+": "webpack           --config _configs/webpack-table-pro.config.js",
-    "micadb": "webpack-dev-server --config _configs/webpack-micadb-dev.config.js --progress --colors",
-    "table2": "webpack-dev-server --config _configs/webpack-table2-dev.config.js --progress --colors"
+    "vector": "webpack-dev-server --config configs/webpack-vector-dev.config.js --progress --colors",
+    "vector+": "webpack           --config configs/webpack-vector-pro.config.js",
+    "tree-ed": "webpack-dev-server --config configs/webpack-tree-ed-dev.config.js --progress --colors",
+    "tree-ed+": "webpack           --config configs/webpack-tree-ed-pro.config.js",
+    "tree": "webpack-dev-server --config configs/webpack-tree-dev.config.js --progress --colors",
+    "tree+": "webpack           --config configs/webpack-tree-pro.config.js",
+    "table": "webpack-dev-server --config configs/webpack-table-dev.config.js --progress --colors",
+    "table+": "webpack           --config configs/webpack-table-pro.config.js",
+    "micadb": "webpack-dev-server --config configs/webpack-micadb-dev.config.js --progress --colors",
+    "table2": "webpack-dev-server --config configs/webpack-table2-dev.config.js --progress --colors"
   },
   "author": "",
   "license": "ISC",
