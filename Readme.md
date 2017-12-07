@@ -1,6 +1,7 @@
 ### What is it?
 This is my test area for developing component-based apps.
-Look inside [package.json](https://github.com/micage/svgjstest/blob/master/package.json) -> scripts to see what you can do.
+Look inside [package.json](https://github.com/micage/svgjstest/blob/master/package.json) -> scripts to 
+see what you can do.
 
 ### Installing
 Go to a directory of your choice
