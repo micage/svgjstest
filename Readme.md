@@ -9,6 +9,7 @@ Go to a directory of your choice
 Get the repository:
 ```
 git clone https://github.com/micage/svgjstest.git
+
 cd svgjstest
 ```
 Install dependencies:
