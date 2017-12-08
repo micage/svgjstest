@@ -38,9 +38,13 @@ I'm very tempted to break my own guideline here, because HTMLElement is so hard 
 
 Let's stop the waste now!
 
-Back to our components. Most of this writing deals with DOM-Components. Reason is components are just modules, ES6-classes. You export what you like to be public, the rest is private. Very Good. What makes writing DOM-Components hard is the fact that the interfaces are fixed, you cannot derive a CustomHTMLElement (unless you are using ES6) and customization of built-in elements is clumsy to say the least.
+Back to our components. Most of this writing deals with DOM-Components. Reason is components are just modules. You export what you like to be public, the rest is private. Very good. What makes writing DOM-Components hard is the fact that the interfaces are fixed, you cannot derive a CustomHTMLElement (unless you are using ES6 and Chrome). The browser will not accept it.
 
-Hard and clumsy but it can be done. Like this:
+Also the regular way to customize built-in elements is clumsy to say the least. So why would you do it?
+1. connect HTMLElements with a controller class instance (that connects to a model class instance)
+2. define custom interfaces (all you need interfaces)
+
+Hard and clumsy but it can be done. Like this: 
 
 ...
 
