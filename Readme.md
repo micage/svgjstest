@@ -17,13 +17,26 @@ At the end you get a tree of components where each component is managing it's pa
 Each component is also associated with a database table. Each instance of a component becomes a row and public properties of the component are the columns in this table. Syncing data between the app and the database is a user decision.
 E.g. via a save button. You can also load and save partially.
 
-What is a component?
+What is a component (module could be used interchangably)?
 In Javascript it's sadly just a normal object. There is no barrier, no encapsulation. You can read, write, modify values or even change the structure of any object. This is total freedom. Sounds good, but leads to total mess in
 a world of shared code bases. So one way to avoid this is to agree on conventions.
 The other would be to use a different language (No joke). Nowadays everyone knows
 that e.g. changing the prototype of shared objects or even JS built-in objects is a really bad idea. Although no one could hold you back from doing it.
 
-To be continued ... 
+You get a component by calling a factory function, e.g.;
+```let myTableView = TableView(args); // returns an HTMLDivElement here```
+So you call a function with an argument object that contains properties and callback functions.
+The argument object is the interface for the component. After creation you are not allowed
+to modify the structure of the returned object. You only should access public
+properties and functions (that means documented).
+
+In the case of HTMLElement this means, use the data-mechanism and write custom events to call user-defined functions. 
+
+I'm very tempted to break my own guideline here, because HTMLElement is so hard to extend (native ES6 uses derived classes, but i think it's only available for the Chrome browser). If the world wide web consumes a lot of our planets' resources, how much is it the fault of the clumsy and archaic class design of the Document Object Model (DOM)? I hardly ever use 10% of the properties and functions - aside they read like a telephone book. DOM-Trees of thousands of nodes are not uncommon. Every tiny HTMLElement (div, p, span, ...) has this huge list of properties and functions, needed or not. Every website on the planet is using the DOM. Would be a good time to stop the waste and start something new. DOM++. Website developers should use a component- and interface-based API like DirectX, compile their code and publish it as archives. Why should'nt a user agent (funny word, means browser) be fed with archived and compiled binaries? Let's stop the waste now!
+
+Back to our components
+
+To be continued ... this is just the beginning of the component story
 
 ### Installing
 Open the terminal app. Go to a directory of your choice.
