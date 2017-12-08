@@ -23,8 +23,10 @@ a world of shared code bases. So one way to avoid this is to agree on convention
 The other would be to use a different language (No joke). Nowadays everyone knows
 that e.g. changing the prototype of shared objects or even JS built-in objects is a really bad idea. Although no one could hold you back from doing it.
 
-You get a component by calling a factory function, e.g.;
-```let myTableView = TableView(args); // returns an HTMLDivElement here```
+You get a component by calling a factory function, e.g.:
+```
+let myTableView = TableView(args); // returns an HTMLDivElement here
+```
 So you call a function with an argument object that contains properties and callback functions.
 The argument object is the interface for the component. After creation you are not allowed
 to modify the structure of the returned object. You only should access public
