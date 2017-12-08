@@ -32,13 +32,19 @@ The argument object is the interface for the component. After creation you are n
 to modify the structure of the returned object. You only should access public
 properties and functions (that means documented).
 
-In the case of HTMLElement this means, use the data-mechanism and write custom events to call user-defined functions. 
+In the case of HTMLElement this means, use the data-mechanism (beware of weird transformations between dashed  and camel-case property names) and write custom events to call user-defined functions. 
 
-I'm very tempted to break my own guideline here, because HTMLElement is so hard to extend (native ES6 uses derived classes, but i think it's only available for the Chrome browser). If the world wide web consumes a lot of our planets' resources, how much is it the fault of the clumsy and archaic class design of the Document Object Model (DOM)? I hardly ever use 10% of the properties and functions - aside they read like a telephone book. DOM-Trees of thousands of nodes are not uncommon. Every tiny HTMLElement (div, p, span, ...) has this huge list of properties and functions, needed or not. Every website on the planet is using the DOM. Would be a good time to stop the waste and start something new. DOM++. Website developers should use a component- and interface-based API like DirectX, compile their code and publish it as archives. Why should'nt a user agent (funny word, means browser) be fed with archived and compiled binaries? Let's stop the waste now!
+I'm very tempted to break my own guideline here, because HTMLElement is so hard to extend (native ES6 uses derived classes, but i think it's only available for the Chrome browser). If the world wide web consumes a lot of our planets' resources, how much is it the fault of the clumsy and archaic class design of the Document Object Model (DOM)? I hardly ever use 10% of the properties and functions - aside they read like a telephone book. DOM-Trees of thousands of nodes are not uncommon. Every tiny HTMLElement (div, p, span, ...) has this huge list of properties and functions, needed or not. Every website on the planet is using the DOM. Would be a good time to stop the waste and start something new. DOM++. Website developers should use a component- and interface-based API like DirectX, compile their code and publish it as archives. Why should a user agent (funny word, means browser) not be fed with archived and compiled binaries? Every OS is doing it this way.
 
-Back to our components
+Let's stop the waste now!
 
-To be continued ... this is just the beginning of the component story
+Back to our components. Most of this writing deals with DOM-Components. Reason is components are just modules, ES6-classes. You export what you like to be public, the rest is private. Very Good. What makes writing DOM-Components hard is the fact that the interfaces are fixed, you cannot derive a CustomHTMLElement (unless you are using ES6) and customization of built-in elements is clumsy to say the least.
+
+Hard and clumsy but it can be done. Like this:
+
+...
+
+To be continued ... this is just the beginning of the component story.
 
 ### Installing
 Open the terminal app. Go to a directory of your choice.
