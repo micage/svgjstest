@@ -6,6 +6,10 @@ import styles from "./TreeViewFlagged.less";
 
 const file = "TreeViewFlagged.js >> "; // for logging only
 
+let nodes = {}; // hash for all produced nodes
+
+let pwd = "/"; // set path to root
+
 /*
     What distinguishes a TreeViewFlagged from a TreeView is that list items
     have a nested and an additional unnested part. The nested part gets its offset by
@@ -71,6 +75,10 @@ const file = "TreeViewFlagged.js >> "; // for logging only
         select, triggered by click
 */
 
+function onEditLabel() {
+
+}
+
 function toggleFolder(icon) {
     toggleFlag({
         icon, on: "icon-folder-open", off: "icon-folder",
@@ -116,7 +124,8 @@ function toggleFlag(args) {
 }
 
 function onClickNode(ev) {
-    // clicked node becomes the 'selected' one
+    // currentTarget is the one that is interested in click events
+    // clicked node becomes the 'selected' one, just add style ".selected"
     console.log(file + 'target: ' + ev.target + ', currentTarget: ' + ev.currentTarget);
 }
 
@@ -163,13 +172,20 @@ function onNodeLabelDblClick(ev) {
 }
 
 /** 
- * callback for ReplicateTree function
+ * callback for the ReplicateTree function
+ * 
+ * Note: be careful where to place the event listener, 
+ * ev.target is the Element you clicked 
+ * ev.currentTarget is the element that is listening to events, 
+ * it's an anchestor (or the same element) in the DOM hierarchy
+ * 
  * @private
  * @type {HTMLUListElement|null}
  * @param {HTMLUListElement|null} parent
  * @param {Object|null} nodeInfo
- * @param {String} nodeInfo.id
+ * @param {String} nodeInfo.id - used for the label string
  * @param {Boolean} nodeInfo.hasChildren
+ * @returns {HTMLLIElement} - a list item a.k.a. <li>
  */
 function createNode(parent, nodeInfo) {
     if (!parent) {
@@ -181,6 +197,9 @@ function createNode(parent, nodeInfo) {
 
     // create tree node with associated flags
     let itemArgs = {
+        attr: {
+            name: "node." + DOM.genId()
+        },
         children: [
             DOM.Div({
                 class: styles["list-item-box"],
@@ -221,7 +240,7 @@ function createNode(parent, nodeInfo) {
                             }),
                             DOM.Span({
                                 class: styles.itemLabel,
-                                text: nodeInfo.id,
+                                text: nodeInfo.id, // nodeInfo.id -> label.innerHTML
                                 listenTo: {
                                     dblclick: (ev) => onNodeLabelDblClick(ev)
                                 }
@@ -242,8 +261,9 @@ function createNode(parent, nodeInfo) {
         itemArgs.children.push(ul);
     }
 
-    let child = DOM.ListItem(itemArgs);
-    parent.appendChild(child);
+    let child = DOM.ListItem(itemArgs); // creates an <li>
+
+    parent.appendChild(child); // adds it to a parent, which is always a <ul>
 
     // for leaf nodes this will return null
     // if this node has no children the return value will not be used
@@ -260,7 +280,7 @@ function createNode(parent, nodeInfo) {
  * @param {Object} args
  * @param {Object} args.container - needs to have a traverse function
  * @param {Function} [args.skipNode] - optional, node will be skipped if function returns true
- * @type {HTMLDivElement}
+ * @returns {HTMLDivElement}
  */
 export default
 function CreateFlaggedTreeView(args)
@@ -283,7 +303,7 @@ function CreateFlaggedTreeView(args)
         }
     }
 
-    // if (!__.checkObject(args.listenTo)) args.listenTo = {} // CHK!
+    if (!__.checkObject(args.listenTo)) args.listenTo = {} // CHK!
 
     if (__DEBUG__) {
         // console log what has been clicked

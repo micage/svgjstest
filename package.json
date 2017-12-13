@@ -16,6 +16,7 @@
     "tree-ed+": "webpack           --config configs/webpack-tree-ed-pro.config.js",
     "tree-rep": "webpack-dev-server --config configs/webpack-tree-dev.config.js --progress --colors",
     "tree-rep+": "webpack           --config configs/webpack-tree-pro.config.js",
+    "tree-test": "webpack-dev-server --config configs/webpack-tree-test-dev.config.js --progress --colors",
     "table": "webpack-dev-server --config configs/webpack-table-dev.config.js --progress --colors",
     "table+": "webpack           --config configs/webpack-table-pro.config.js",
     "micadb": "webpack-dev-server --config configs/webpack-micadb-dev.config.js --progress --colors",

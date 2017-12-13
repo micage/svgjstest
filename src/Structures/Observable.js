@@ -203,6 +203,37 @@ class ObservableTree {
 };
 
 
+/**
+ * This has to monitor a list
+ * Only Observables are accessable by views, so the only thing a view can see
+ * are the public functions of observables
+ * data could be am array or an object (key , value)
+ */
+class ObservableList {
+    constructor(args) {
+        if (!__.checkObject(args.list)) throw new Error("No valid List");
+        this._list = args.list;
+    }
+    /**
+     * Your model has to know how to create an item
+     * Here we just connect a name with some object your model.create gives back
+     */
+    createItem(name, onCreate, itemClass) {
+        let node = onCreate(name);
+        this._list.createItem
+    }
+    readItem(fullPath) {
+
+    }
+    editItem(fullPath, data) {
+
+    }
+    deleteItem(fullpath) {
+
+    }
+};
+
+
 export {
     ObservableValue,
     ObservableRangedValue,

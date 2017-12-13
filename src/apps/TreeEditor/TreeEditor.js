@@ -21,7 +21,12 @@ let ids = {
     idRightTreeView: DOM.genId(),
 }
 
-// model - provides some test data
+// our model - that provides a tree structure
+// we have to be able to perform basic operations (create, edit, delete)
+// objTree.createNode();
+// objTree.editNode();
+// objTree.deleteNode();
+
 let test2 = {
     people: [
         { name: "Heinz", age: 42, hobbies: ["diving", "boulder", "cinema"] },
