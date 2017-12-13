@@ -74,16 +74,14 @@ npm run tree-ed
 ```
 
 #### Tree Replication and filtering
-Start devserver on port 3015, then visit localhost:3015 in the browser
 ```
 npm run tree-rep
+open http://localhost:3015
 ```
 
 #### Table View
-Start devserver on port 3016, then visit localhost:3016 in the browser
 ```
 npm run tree-rep
-
 open http://localhost:3016
 ```
 
@@ -93,7 +91,7 @@ npm run vector
 open http://localhost:3014
 ```
 
-#### ObjectTree Test - prints the visited JSON-Tree to the console
+#### ObjectTree Test - prints the visited JSON-Tree to the console (no production build for this)
 ```
 npm run tree-test
 open http://localhost:3030
