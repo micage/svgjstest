@@ -68,9 +68,9 @@ Now you are ready to run the samples. For all samples: you can run a production 
 For example ```npm run tree-ed+```
 
 #### Tree Editor
-Start devserver on port 3020, then visit localhost:3020 in the browser
 ```
 npm run tree-ed
+open http://localhost:3020
 ```
 
 #### Tree Replication and filtering
@@ -91,7 +91,8 @@ npm run vector
 open http://localhost:3014
 ```
 
-#### ObjectTree Test - prints the visited JSON-Tree to the console (no production build for this)
+#### ObjectTree Test - prints the visited JSON-Tree to the console
+(no production build for this)
 ```
 npm run tree-test
 open http://localhost:3030
