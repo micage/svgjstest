@@ -83,12 +83,20 @@ npm run tree-rep
 Start devserver on port 3016, then visit localhost:3016 in the browser
 ```
 npm run tree-rep
+
+open http://localhost:3016
 ```
 
 #### Vector SVG Test - not working right now, reimplementing the scenegraph
-Start devserver on port 3014, then visit localhost:3014 in the browser
 ```
-npm run vector &&  open http://localhost:3014
+npm run vector
+open http://localhost:3014
+```
+
+#### ObjectTree Test - prints the visited JSON-Tree to the console
+```
+npm run tree-test
+open http://localhost:3030
 ```
 
 
