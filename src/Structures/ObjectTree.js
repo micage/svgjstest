@@ -103,34 +103,128 @@ const _preOrder_ = function (obj, cb, nodeInfo) {
  * @constructor
  * @param {Object} obj - the object that represents the tree
  */
-const ObjectTree = function(obj)
+const ObjectTree = function(name, obj)
 {
-    this._obj = __.checkObject(obj) ? obj : {};
-}
+    if(__DEBUG__) {
+        if (!__.checkString(name))
+            console.error(" ObjectTree(name, obj) - name is not a string: " + name);
+    }
+
+    this._name = name;
+
+    if (__.checkObject(obj) || __.checkArray(obj)) {
+        this._obj = obj;
+        this._value = null;
+    }
+    else {
+        this._obj = null;
+        this._value = obj;
+    }
+};
+
+ObjectTree.prototype.setValue = function (value) {
+    this._value = value;
+};
+
+ObjectTree.prototype.getValue = function () {
+    return this._value;
+};
+
+Object.prototype.getObject = function () {
+    return this._obj;
+};
 
 /**
- * @returns {Object} - an empty object
+ * Tries to find an arbitrary node, given it's full path name
+ * Possible that the node does not exist 
  */
-ObjectTree.prototype.addNode = function (fullPath) {
-    return {};
+ObjectTree.prototype.getChild = function (name) {
+    let obj = this._obj[name];
+    return new ObjectTree(name, obj);
+};
+
+function _getByFullPath(obj, fullPath)  {
+    if (__DEBUG__) if (!__.checkString(fullPath)) console.error("fullPath is not a string: " + fullPath);
+    let pp = fullPath.split("/");
+    let name;
+    for (let i = 0; i < pp.length; i++) {
+        name = pp[i];
+        // if (!obj[name]) {
+        if (!Object.keys(obj).find(k => k === name)) {
+            return null; // early out, key does not exist
+        }
+        else {
+            obj = obj[name];
+        }
+    }
+    return {name, obj};
 }
 
 /**
- * tries to find the node and returns the associated data object
+ * Tries to find an arbitrary node, given it's full path name
+ * Possible that the node does not exist
+ * Ex. "dir1/dir2/key" 
  */
 ObjectTree.prototype.getNode = function (fullPath) {
-    return {};
-}
+    let it = _getByFullPath(this._obj, fullPath);
+    return it ? new ObjectTree(it.name, it.obj) : null;
+};
 
 /**
- * 
+ * @param {String} name
+ * @param {String|Number|Array|Object} value
+ */
+ObjectTree.prototype.setChild = function (name, value) {
+    if (!this._obj) {
+        this._obj = {};
+    }
+
+    this._obj[name] = value;
+};
+
+/**
+ * Sets the value of an arbitrary node given it's full path name
+ * Creates intermediate parent nodes if they do not exist
+ */
+ObjectTree.prototype.setNode = function (fullPath, value) {
+    return {};
+};
+
+/**
+ * @param {String} name - deletes a child node by name
+ */
+ObjectTree.prototype.deleteChild = function (name) {
+    let obj = this._obj[name];
+    let ret;
+
+    if (!obj) {
+        if (__DEBUG__) console.warn("There is no child with this name: " + name);
+        return null;
+    }
+    else {
+        if (__.checkObject(obj) || __.checkArray(obj)) {
+            ret = new ObjectTree(name, obj);
+        }
+        else {
+            ret = obj;
+        }
+        delete this._obj[name];
+        return ret;
+    }
+};
+
+/**
+ * Deletes an arbitrary node given it's full path name
+ * In case the node does not exist the function does nothing
+ * @param {String} fullPath - full (absolute) path name
  */
 ObjectTree.prototype.deleteNode = function (fullPath) {
 
-}
+};
 
 /**
- * @param {Function} visitFunc - walks a tree
+ * @param {String} name - tries to find a node with this name
+ * @returns first occurance of name as a key
  */
 ObjectTree.prototype.find = function (name) {
     if (!__.checkString(name)) return;

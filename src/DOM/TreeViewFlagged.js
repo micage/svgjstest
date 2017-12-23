@@ -10,6 +10,8 @@ let nodes = {}; // hash for all produced nodes
 
 let pwd = "/"; // set path to root
 
+let all = new WeakMap();
+
 /*
     What distinguishes a TreeViewFlagged from a TreeView is that list items
     have a nested and an additional unnested part. The nested part gets its offset by
@@ -123,8 +125,8 @@ function toggleFlag(args) {
     }
 }
 
-function onClickNode(ev) {
-    // currentTarget is the one that is interested in click events
+function onClick(ev) {
+    // ev.currentTarget is the HTMLElement that has this function as a listener
     // clicked node becomes the 'selected' one, just add style ".selected"
     console.log(file + 'target: ' + ev.target + ', currentTarget: ' + ev.currentTarget);
 }
@@ -148,21 +150,21 @@ function onNodeLabelDblClick(ev) {
                 label.innerText = text;
                 console.log('Label changed');
 
-                try { parent.replaceChild(label, input) } catch (e) {}
+                try { parent.replaceChild(label, input) } catch (e) { } // CHK
             },
             keyup: (ev) => { 
                 if (ev.keyCode == 27) {
                     input.value = label.innerText;
                     console.log('cancel input: ' + input.value);
-                    try { parent.replaceChild(label, input) } catch (e) { }
+                    try { parent.replaceChild(label, input) } catch (e) { } // CHK
                 }
                 else if (ev.keyCode == 13) {
                     console.log('accept input: ' + input.value);
-                    try { parent.replaceChild(label, input) } catch (e) { }
+                    try { parent.replaceChild(label, input) } catch (e) { } // CHK
                 }             
             },
             focusout: (ev) => {
-                try { parent.replaceChild(label, input) } catch (e) { }
+                try { parent.replaceChild(label, input) } catch (e) { } // CHK
             }
         }
     });
@@ -195,7 +197,7 @@ function createNode(parent, nodeInfo) {
         return DOM.UnorderedList();
     }
 
-    // create tree node with associated flags
+    // create tree-view node with associated flags as HTMLUListElement
     let itemArgs = {
         attr: {
             name: "node." + DOM.genId()
@@ -203,9 +205,6 @@ function createNode(parent, nodeInfo) {
         children: [
             DOM.Div({
                 class: styles["list-item-box"],
-                listenTo: {
-                    click: (ev) => onClickNode(ev)
-                },
                 children: [
                     // flag icons
                     DOM.Div({
@@ -229,6 +228,7 @@ function createNode(parent, nodeInfo) {
                     DOM.Div({
                         class: styles["list-item-div"],
                         children: [
+                            // icon
                             DOM.Span({
                                 class: [
                                     nodeInfo.hasChildren ? "icon-folder-open" : "icon-minus",
@@ -238,6 +238,7 @@ function createNode(parent, nodeInfo) {
                                     click: (ev) => toggleFolder(ev.target)
                                 }
                             }),
+                            // label
                             DOM.Span({
                                 class: styles.itemLabel,
                                 text: nodeInfo.id, // nodeInfo.id -> label.innerHTML
@@ -271,20 +272,60 @@ function createNode(parent, nodeInfo) {
     return ul;
 }
 
+function getNextListItemBox(el) {
+    let elem = el
+    while (true) {
+        if (elem.classList.contains(styles["list-item-box"])) {
+            return elem;
+        }
+        elem = elem.parentNode;
+    }
+}
+
+/**
+ * Climbs up the DOM to construct a full path to the node
+ * @param {HTMLDivElement} lib - list-item-box, the node
+ * @returns {String} the full path
+ */
+function getFullPath(lib) {
+    // jump over two parents (first is li, second is ul)
+    // until parent of ul is the tree itself (a div TreeEditor__tree)
+
+    let box = lib;
+    let path = [];
+    do {
+        path.push(box.children.item(1).children.item(1).innerText);
+        let parent = box.parentNode.parentNode.parentNode; // li or div
+        box = parent.children.item(0);
+    } while (box.classList.contains(styles["list-item-box"]))
+    return path.reverse().join("/");
+}
+
 /**
  * Creates a DOM-Tree by traversing a tree using ReplicateTree
  * The tree has to provide a traverse function: see ObjectTree.js for details
  * optional filter function (args.skipNode): nodeInfo => boolean
  * to react on select -> args.listenTo.mgSelect
  * 
- * @param {Object} args
+ * @param {Object} args - user object, interface for FlaggedTreeView
  * @param {Object} args.container - needs to have a traverse function
+ * @param {Object} args.listenTo - callback functions
+ * @param {Function} args.listenTo.selectNode
+ * @param {Function} args.listenTo.createNode
+ * @param {Function} args.listenTo.editNode
+ * @param {Function} args.listenTo.deleteNode
  * @param {Function} [args.skipNode] - optional, node will be skipped if function returns true
- * @returns {HTMLDivElement}
+ * @returns {HTMLDivElement} - which has a UL (the tree-view) as sole child
  */
 export default
 function CreateFlaggedTreeView(args)
 {
+    if (!__.checkObject(args.listenTo)) {
+        args.listenTo = {} // CHK!
+    }
+
+    var calls = {};
+
     if (__DEBUG__) {
         if (!__.checkObject(args)) {
             console.error("CreateFlaggedTreeView: no arguments provided");
@@ -303,16 +344,123 @@ function CreateFlaggedTreeView(args)
         }
     }
 
-    if (!__.checkObject(args.listenTo)) args.listenTo = {} // CHK!
+    if (!__.checkObject(args.listenTo)) {
+        if (__DEBUG__) {
+            calls.selectNode = (node) => { console.log('calls.selectNode: ' + node.id); };
+            calls.createNode = (node) => { console.log('calls.createNode: ' + node.id); };
+            calls.editNode = (node) => { console.log('calls.editNode: ' + node.id); };
+            calls.deleteNode = (node) => { console.log('calls.deleteNode: ' + node.id); };
+        }
+        else {
+            calls.selectNode = () => {};
+            calls.createNode = () => { };
+            calls.editNode = () => { };
+            calls.deleteNode = () => { };
+        }
+        args.listenTo = {};
+    }
 
-    if (__DEBUG__) {
-        // console log what has been clicked
-        args.listenTo = {
-            click: (ev) => {
-                console.log(ev.target); 
-            }
+    if (!__.checkFunction(args.listenTo.selectNode)) {
+        if (__DEBUG__) {
+            calls.selectNode = (node) => { console.log('onSelectNode: ' + node.id); }
+        }
+        else {
+            calls.selectNode = () => { }
         }
     }
+    else {
+        calls.selectNode = args.listenTo.selectNode;
+    }
+
+    if (!__.checkFunction(args.listenTo.createNode)) {
+        if (__DEBUG__) {
+            calls.createNode = (node) => { console.log('onCreateNode: ' + node.id); }
+        }
+        else {
+            calls.createNode = () => { }
+        }
+    }
+    else {
+        calls.createNode = args.listenTo.createNode;
+    }
+
+    if (!__.checkFunction(args.listenTo.editNode)) {
+        if (__DEBUG__) {
+            calls.editNode = (node) => { console.log('editNode: ' + node.id); }
+        }
+        else {
+            calls.editNode = () => { }
+        }
+    }
+    else {
+        calls.editNode = args.listenTo.editNode;
+    }
+
+    if (!__.checkFunction(args.listenTo.deleteNode)) {
+        if (__DEBUG__) {
+            calls.deleteNode = (node) => { console.log('deleteNode: ' + node.id); }
+        }
+        else {
+            calls.deleteNode = () => { }
+        }
+    }
+    else {
+        calls.deleteNode = args.listenTo.deleteNode;
+    }
+
+    if (__DEBUG__ && __.checkFunction(args.listenTo.check)) { console.warn("check listener is not evaluated."); }
+
+    /**
+     * This is the central click handler for the tree-view
+     * It has to resolve clicks on certain elements to user messages (e.g. createNode)
+     * How to resolve the full path of a tree-node? Or save each node pointer together
+     * with it's corresponding ObjectTree pointer?
+     */
+    function click (ev) {
+        let treeView = ev.currentTarget;
+        // ev.currentTarget is the tree-wrapping Div (-> self), will stay unchanged for all tree messages
+        // ev.target is the actual sub-element that has been clicked
+        // have to get a pointer to the user interface (calls)
+        console.log(ev.target);
+
+        // now transform DOM messages to our messages
+        // a WeakMap is used to resolve the user interface pointer calls (function table)
+        // by a pointer to self (HTMLDivElement)
+        // with this we can call functions directly (without sending messages through the DOM)
+        // 1. click on label:
+        // 2. click on icon: toggles sub-tree visibility
+        // 3. click on list-item-div (): 
+        // 4. click on list-item-flags (): 
+        // 5. click on list-item-box (): this is a complete line representing a node
+        // 6. it's possible to click on the tree itself -> do nothing
+        // 1-5. a click will select this node
+        
+        // list-item-box (div, parent is li)
+        //   list-item-flags (div)
+        //     icon (span)
+        //   list-item-div (div)
+        //     icon (span)
+        //     itemLabel (span)
+
+        // we may need a function that climbs up the DOM-Tree beginning at ev.target
+        // and return the next list-item-box (to set the selected class)
+
+        // we may also need a function that climbs up the DOM-Tree beginning at the selected
+        // list-item-box and returns a full path
+
+        let box = getNextListItemBox(ev.target);
+        let oldSelection = ev.currentTarget.getElementsByClassName(styles.selected);
+        if (oldSelection.length) {
+            let elem = oldSelection.item(0);
+            elem.classList.remove(styles.selected);
+        }
+        box.classList.add(styles.selected);
+        let path = getFullPath(box);
+
+        let calls = all.get(ev.currentTarget);
+        calls.selectNode(path); // give a full path here
+    }
+    args.listenTo = { click }; // overwrites the argument value which has been copied to calls
 
     /** @type {HTMLUListElement} */
     var root = ReplicateTree({
@@ -325,6 +473,9 @@ function CreateFlaggedTreeView(args)
 
     args.children = [root]; // a tree has no user defined children, only root ul
 
-    let self = DOM.Div(args); // wrap tree in a div
-    return self
+    let _self = DOM.Div(args); // wrap tree in a div
+
+    all.set(_self, calls); // save all instances together with it's interface pointer in a WeakMap
+    
+    return _self;
 };

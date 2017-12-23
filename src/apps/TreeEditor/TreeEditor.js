@@ -13,6 +13,7 @@ import styles from "./TreeEditor.less";
 import "../../../fonts/icomoon/style.css"; // icomoon svg font
 
 if (__DEBUG__) console.log("Debug Mode");
+const FILE = "TreeEditor: ";
 
 let ids = {
     idLeftPane: DOM.genId(),
@@ -57,13 +58,28 @@ let test2 = {
     i2: "i2 data",
     i3: "i3 data"
 };
-var objTree = new ObjectTree(test2);
+var objTree = new ObjectTree("test2", test2);
 
 // view
 var views = {
     tvOriginal: null,
     nodeViewer: null
 };
+
+let cbs = {
+    onSelectNode: (path) => {
+        console.log(FILE + path);
+    },
+    onCreateNode: (path) => {
+        console.log(FILE + path);
+    },
+    onEditNode: (path) => {
+        console.log(FILE + path);
+    },
+    onDeleteNode: (path) => {
+        console.log(FILE + path);
+    }
+}
 
 
 const createApp = () => {
@@ -122,7 +138,14 @@ const createApp = () => {
                             }),
                             // tree-view
                             views.tvOriginal = TreeViewFlagged({
-                                class: styles.tree, container: objTree
+                                class: styles.tree, 
+                                container: objTree,
+                                listenTo: {
+                                    selectNode: cbs.onSelectNode,
+                                    createNode: cbs.onCreateNode,
+                                    editNode: cbs.onEditNode,
+                                    deleteNode: cbs.onDeleteNode,
+                                }
                             }),
                         ]
                     }),
