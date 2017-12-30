@@ -20,7 +20,8 @@
     "table": "webpack-dev-server --config configs/webpack-table-dev.config.js --progress --colors",
     "table+": "webpack           --config configs/webpack-table-pro.config.js",
     "micadb": "webpack-dev-server --config configs/webpack-micadb-dev.config.js --progress --colors",
-    "table2": "webpack-dev-server --config configs/webpack-table2-dev.config.js --progress --colors"
+    "table2": "webpack-dev-server --config configs/webpack-table2-dev.config.js --progress --colors",
+    "group1": "webpack-dev-server --config configs/webpack-group1-dev.config.js --progress --colors"
   },
   "author": "",
   "license": "ISC",

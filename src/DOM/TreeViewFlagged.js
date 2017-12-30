@@ -4,13 +4,19 @@ import * as DOM from "./Elements";
 
 import styles from "./TreeViewFlagged.less";
 
+// constants
 const file = "TreeViewFlagged.js >> "; // for logging only
 
-let nodes = {}; // hash for all produced nodes
-
-let pwd = "/"; // set path to root
-
+// statics (shared over all instances of TreeViewFlagged)
 let all = new WeakMap();
+let all_nodes = {}; // hash for all produced nodes
+
+/*
+Remarks:
+The buttons for the flags are really Two-State-Buttons
+What about writing a N-State-Button class?
+*/
+
 
 /*
     What distinguishes a TreeViewFlagged from a TreeView is that list items

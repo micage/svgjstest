@@ -60,12 +60,13 @@ let test2 = {
 };
 var objTree = new ObjectTree("test2", test2);
 
-// view
+// views
 var views = {
     tvOriginal: null,
     nodeViewer: null
 };
 
+// callbacks
 let cbs = {
     onSelectNode: (path) => {
         console.log(FILE + path);

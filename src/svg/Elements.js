@@ -32,7 +32,8 @@ const CopyProps = (elem, props) => {
 
 const Create = (args) => {
     let elem = document.createElementNS(svgNS, args.Type);
-
+    
+    // Note: this is not sufficient for checking the interface
     if (args.class) addClasses(elem, args.class); delete args.class;
     if (args.style) applyStyle(elem, args.style); delete args.style;
     if (args.children) appendChildren(elem, args.children); delete args.children;
@@ -46,6 +47,7 @@ const SVG = (args) => {
 
     args.Type = "svg";
     args.attr = ["xmlns:xlink", "viewBox"];
+
     let self = Create(args);
 
     self.setAttribute('xmlns:xlink', svgLink);
@@ -83,13 +85,13 @@ const Group = (args) => {
  *  - {string} className - CSS className
  */
 const Line = (args) => {
-    let bHasPoints = 0;
+    // check for p0
+    // check for p1
     if(__DEBUG__) {
         if (!__.checkObject(args)) args = {};
         if (__.checkObject(args.p0) || __.checkObject(args.p1)) {
             if (!__.checkObject(args.p0)) args.p0 = new Vector2();
             if (!__.checkObject(args.p1)) args.p1 = new Vector2();
-            bHasPoints = 1;
         } else {
             args.x1 = __.checkNumber(args.x1) ? args.x1 : 0;
             args.y1 = __.checkNumber(args.y1) ? args.y1 : 0;
@@ -97,21 +99,18 @@ const Line = (args) => {
             args.y2 = __.checkNumber(args.y2) ? args.y2 : 0;
         }
     }
+    let p0 = args.p0;
+    let p1 = args.p1;
+    delete args.p0;
+    delete args.p1;
 
     args.Type = "line";
     let self = Create(args);
 
-    // set read only props as attributes
-    if (bHasPoints) {
-        args.x1 = args.points[0].x;
-        args.y1 = args.points[0].y;
-        args.x2 = args.points[1].x;
-        args.y2 = args.points[1].y;
-    }
-    self.setAttribute("x1", args.x1);
-    self.setAttribute("y1", args.y1);
-    self.setAttribute("x2", args.x2);
-    self.setAttribute("y2", args.y2);
+    self.setAttribute("x1", p0.x);
+    self.setAttribute("y1", p0.y);
+    self.setAttribute("x2", p1.x);
+    self.setAttribute("y2", p1.y);
 
     return self;
 };
