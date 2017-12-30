@@ -2,7 +2,7 @@ import * as __ from "../../Util/ParamCheck";
 import * as SVG from "../../svg/Elements";
 
 // 1, 2, 3
-function pos (x, y, c) {
+function drawSign (x, y, c) {
     let width = 40;
     let height = 10;
     return SVG.Group({
@@ -11,14 +11,20 @@ function pos (x, y, c) {
                 p0: { x, y },
                 p1: { x: x + width, y: y + (c.a-1) * height }
             }),
+            SVG.Circle({ cx: x, cy: y, r: 2 }),
+            SVG.Circle({ cx: x + width, cy: y + (c.a-1) * height, r: 2 }),
             SVG.Line({
                 p0: { x, y: y + height },
                 p1: { x: x + width, y: y + (c.b-1) * height }
             }),
+            SVG.Circle({ cx: x, cy: y + height, r: 2 }),
+            SVG.Circle({ cx: x + width, cy: y + (c.b-1) * height, r: 2 }),
             SVG.Line({
                 p0: { x, y: y + 2 * height },
                 p1: { x: x + width, y: y + (c.c-1) * height }
             }),
+            SVG.Circle({ cx: x, cy: y + 2 * height, r: 2 }),
+            SVG.Circle({ cx: x + width, cy: y + (c.c-1) * height, r: 2 }),
     ]})
 }
 
@@ -45,7 +51,7 @@ let table = function() {
     let out = [];
     cayley.forEach((w, j) => {
         cayley[j].forEach((v, i) => {
-            out.push(pos((i + 1) * 70, 10 + j * 50, v));
+            out.push(drawSign((i + 1) * 70, 10 + j * 50, v));
         });
     });
     return out;
@@ -54,11 +60,10 @@ let table = function() {
 let svg = new SVG.SVG({
     viewBox: "0 0 1000 400",
     style: {
-        stroke: "tomato"
+        stroke: "tomato", fill: "yellow"
     },
     children: table()
 });
-
 
 document.body.appendChild(svg);
 
