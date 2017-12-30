@@ -162,7 +162,7 @@ const Circle = (args) => {
     // set read only props as attributes
     self.setAttribute("cx", __.checkNumber(args.cx) ? args.cx : 10);
     self.setAttribute("cy", __.checkNumber(args.cx) ? args.cy : 10);
-    self.setAttribute("r", __.checkNumber(args.r) ? args.cy : 10);
+    self.setAttribute("r", __.checkNumber(args.r) ? args.r : 10);
 
     return self;
 };
