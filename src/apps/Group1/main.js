@@ -32,21 +32,25 @@ function drawSign (x, y, c) {
 let d3 = {
     e: { a: 1, b: 2, c: 3 },
     r: { a: 2, b: 3, c: 1 },
-    r2: { a: 3, b: 1, c: 2 }, // r2 * r = e, r2 = r^-1
+    r2: { a: 3, b: 1, c: 2 }, // r2 * r = e, r^2 = r^-1
     f1: { a: 1, b: 3, c: 2 },
     f2: { a: 3, b: 2, c: 1 },
     f3: { a: 2, b: 1, c: 3 }
 };
 
 let cayley = [
-    [d3.e , d3.r,  d3.r2, d3.f1, d3.f2, d3.f3],
-    [d3.r , d3.r2, d3.e,  d3.f2, d3.f3, d3.f1],
-    [d3.r2, d3.e,  d3.r,  d3.f3, d3.f1, d3.f2],
-    [d3.f1, d3.f3, d3.f2, d3.e,  d3.r,  d3.r2],
-    [d3.f2, d3.f1, d3.f3, d3.r2, d3.e,  d3.r],
-    [d3.f3, d3.f2, d3.f1, d3.r,  d3.r2, d3.e],
+    [d3.e , d3.r,  d3.r2, d3.f1, d3.f2, d3.f3], // e
+    [d3.r2, d3.e,  d3.r,  d3.f3, d3.f1, d3.f2], // r^-1 = r^2
+    [d3.r , d3.r2, d3.e,  d3.f2, d3.f3, d3.f1], // r
+    [d3.f1, d3.f3, d3.f2, d3.e,  d3.r,  d3.r2], // f1
+    [d3.f2, d3.f1, d3.f3, d3.r2, d3.e,  d3.r],  // f2
+    [d3.f3, d3.f2, d3.f1, d3.r,  d3.r2, d3.e],  // f3
 ];
 
+/**
+ * this much more interesting, how to fill an array
+ * or an array of arrays, it has to land as an array of groups
+ */
 let table = function() {
     let out = [];
     cayley.forEach((w, j) => {
@@ -58,7 +62,7 @@ let table = function() {
 }
 
 let svg = new SVG.SVG({
-    viewBox: "0 0 1000 400",
+    viewBox: "0 0 500 500",
     style: {
         stroke: "tomato", fill: "yellow"
     },

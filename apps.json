@@ -1,0 +1,47 @@
+{
+    "parse1": {
+        "dir": "Parse1", 
+        "name": "main"
+    },
+    "parse2": {
+        "dir": "Maze",
+        "name": "main"
+    },
+    "ott": {
+        "dir": "ObjectTreeTest",
+        "name": "main"
+    },
+    "group": {
+        "dir": "Group1",
+        "name": "main"
+    },
+    "table1": {
+        "dir": "MicaDB",
+        "name": "main"
+    },
+    "table2": {
+        "dir": "Table2",
+        "name": "main"
+    },
+    "table3": {
+        "dir": "TableView",
+        "name": "main"
+    },
+    "tree-ed": {
+        "dir": "TreeEditor",
+        "name": "main"
+    },
+    "tree-rep": {
+        "dir": "TreeReplicator",
+        "name": "main"
+    },
+    "vec": {
+        "dir": "Vector",
+        "name": "main"
+    },
+    "vec2": {
+        "dir": "PathEditor",
+        "name": "main2"
+    },
+    "_": {}
+}

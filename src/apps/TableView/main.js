@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
 });
 
+// local web and sql has to be running (web_on & sql_on)
 let args = {
     // 'http://' prefix is important
     url: "http://mmm-api.mmm/api", // does not work anymore, configure routes first!
@@ -26,6 +27,7 @@ Db.loadTable(args).then(
             data: tableData
         });
         document.body.appendChild(tableView);
+
         DOM.mount(tableView);
     },
     ret => {

@@ -25,6 +25,10 @@ const onMount = function (ev) {
 
         lb.style["width"] = lb.clientWidth + "px"; // 'bake' width into list-box
     }
+
+    // get all list items
+    let lis = document.querySelectorAll('.list li');
+
     document.querySelector(".table").classList.add("then");
 
     // add drag listeners to all rulers
@@ -32,21 +36,32 @@ const onMount = function (ev) {
         let ruler = rulers.item(i);
 
         ruler.addEventListener("mousedown", function (ev) {
-            console.log("mouse down " + i);
+            if (__DEBUG__) console.log("mouse down " + i);
 
             let ruler = ev.target;
             let lb = ruler.parentElement;
             let mm, mmOptions = { capture: true };
             let mu, muOptions = { once: true };
 
+            // disable pointer events to prevent "flickering" while dragging
+            for (let i = 0; i < lis.length; i++) {
+                lis[i].style['pointer-events'] = 'none';
+            }
+
             window.addEventListener("mousemove", mm = function mm(ev) {
                 lb.style.width = `${ev.pageX - lb.offsetLeft}px`;
             }, mmOptions);
 
-            window.addEventListener("mouseup", mu = function (ev) {
+            window.addEventListener("mouseup", mu = function () {
                 window.removeEventListener("mousemove", mm, mmOptions);
                 window.removeEventListener("mouseup", mu, muOptions);
-                console.log("mouse up " + i);
+
+                // reenable pointer events
+                for (let i = 0; i < lis.length; i++) {
+                    lis[i].style['pointer-events'] = '';
+                }
+
+                if (__DEBUG__) console.log("mouse up " + i);
             });
         });
     }

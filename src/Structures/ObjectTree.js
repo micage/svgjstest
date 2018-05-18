@@ -1,7 +1,7 @@
 "use strict";
 const __ = require("../Util/ParamCheck");
 
-/** A recursively called function that tracerses the hierarchy of a javascript object
+/** A recursively called function that traverses the hierarchy of a javascript object
  * @param {Object} obj - the object to traverse
  * @param {TreeVisitor} cb - a callback function that is called for each currently visited node
  * @param {Object} nodeInfo - a structure that provides the callback with info about the currently visited node
@@ -101,52 +101,64 @@ const _preOrder_ = function (obj, cb, nodeInfo) {
 
 /**
  * @constructor
- * @param {Object} obj - the object that represents the tree
+ * @param {String} key
+ * @param {any} value
  */
-const ObjectTree = function(name, obj)
-{
+const ObjectTree = function(key, value) {
     if(__DEBUG__) {
-        if (!__.checkString(name))
-            console.error(" ObjectTree(name, obj) - name is not a string: " + name);
+        if (!__.checkString(key)) {
+            console.error(" ObjectTree(key, obj) - key is not a string: " + key);
+        }
     }
 
-    this._name = name;
-
-    if (__.checkObject(obj) || __.checkArray(obj)) {
-        this._obj = obj;
-        this._value = null;
-    }
-    else {
-        this._obj = null;
-        this._value = obj;
-    }
-};
-
-ObjectTree.prototype.setValue = function (value) {
+    this._key = key;
     this._value = value;
 };
 
-ObjectTree.prototype.getValue = function () {
-    return this._value;
-};
+Object.defineProperties(ObjectTree.prototype, {
+    "key": {
+        get: function() { 
+            return this._key;
+        }
+    },
+    "value": {
+        get: function () {
+            return this._value;
+        }
+    }
+});
 
-Object.prototype.getObject = function () {
-    return this._obj;
+/**
+ * Tries to find a child node
+ * Possibly the node does not exist. In that case it will NOT be created.
+ */
+ObjectTree.prototype.getChild = function(key) {
+    let val = this._value[key];
+    if (val) {
+        return new ObjectTree(key, val);
+    }
+    else {
+        return null;
+    }
 };
 
 /**
- * Tries to find an arbitrary node, given it's full path name
- * Possible that the node does not exist 
+ * @param {String} key
+ * @param {any} value
  */
-ObjectTree.prototype.getChild = function (name) {
-    let obj = this._obj[name];
-    return new ObjectTree(name, obj);
+ObjectTree.prototype.setChild = function (key, value) {
+    this._value[key] = value;
 };
 
+/**
+ * @private
+ */
 function _getByFullPath(obj, fullPath)  {
     if (__DEBUG__) if (!__.checkString(fullPath)) console.error("fullPath is not a string: " + fullPath);
+
     let pp = fullPath.split("/");
     let name;
+    
     for (let i = 0; i < pp.length; i++) {
         name = pp[i];
         // if (!obj[name]) {
@@ -157,7 +169,7 @@ function _getByFullPath(obj, fullPath)  {
             obj = obj[name];
         }
     }
-    return {name, obj};
+    return { name, obj };
 }
 
 /**
@@ -165,60 +177,44 @@ function _getByFullPath(obj, fullPath)  {
  * Possible that the node does not exist
  * Ex. "dir1/dir2/key" 
  */
-ObjectTree.prototype.getNode = function (fullPath) {
-    let it = _getByFullPath(this._obj, fullPath);
+ObjectTree.prototype.getNode = function(fullPath) {
+    let it = _getByFullPath(this._value, fullPath);
     return it ? new ObjectTree(it.name, it.obj) : null;
 };
 
 /**
- * @param {String} name
- * @param {String|Number|Array|Object} value
+ * @param {String} name - deletes a key and it's value 
  */
-ObjectTree.prototype.setChild = function (name, value) {
-    if (!this._obj) {
-        this._obj = {};
-    }
-
-    this._obj[name] = value;
-};
-
-/**
- * Sets the value of an arbitrary node given it's full path name
- * Creates intermediate parent nodes if they do not exist
- */
-ObjectTree.prototype.setNode = function (fullPath, value) {
-    return {};
-};
-
-/**
- * @param {String} name - deletes a child node by name
- */
-ObjectTree.prototype.deleteChild = function (name) {
-    let obj = this._obj[name];
-    let ret;
-
-    if (!obj) {
-        if (__DEBUG__) console.warn("There is no child with this name: " + name);
-        return null;
-    }
-    else {
-        if (__.checkObject(obj) || __.checkArray(obj)) {
-            ret = new ObjectTree(name, obj);
-        }
-        else {
-            ret = obj;
-        }
-        delete this._obj[name];
-        return ret;
-    }
+ObjectTree.prototype.deleteChild = function(key) {
+    delete this._value[key];
 };
 
 /**
  * Deletes an arbitrary node given it's full path name
- * In case the node does not exist the function does nothing
- * @param {String} fullPath - full (absolute) path name
+ * In case the node does not exist the function return null
+ * @param {String} fullPath - full path name, using / as separator
  */
-ObjectTree.prototype.deleteNode = function (fullPath) {
+ObjectTree.prototype.deleteNode = function(fullPath) {
+    let st = fullPath.split("/").reverse();
+
+    while(st.length) {
+        let keys = Object.keys(this._value);
+        let pwd = st.pop();
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            if (key === pwd) {
+                if (st.length) {
+                    break;
+                }
+                else {
+                    delete pwd[key];
+                }
+            }
+            else {
+                return null;
+            }            
+        }
+    }
 
 };
 
@@ -249,26 +245,29 @@ ObjectTree.prototype.find = function (name) {
 };
 
 /**
- * @param {Function} visitFunc - walks a tree
+ * @param {Function} visitor - function which is called for each node
  */
-ObjectTree.prototype.traverse = function (visitFunc) {
-    if (!__.checkFunction(visitFunc)) return;
+ObjectTree.prototype.traverse = function (visitor) {
+    if (!__.checkFunction(visitor)) return;
 
     let nodeInfo = {
-        depth: 0
+        depth: 0,
+        isLastChild: 1
     };
 
     bbb.dc = true;
-    _preOrder(this._obj, visitFunc, nodeInfo);
+
+    _preOrder(this._value, visitor, nodeInfo);
 };
 
+// this is a sample visit function for the traverse function
 ObjectTree.Printer = (node) => {
     
     //"RIGHT TACK, Unicode: U + 22A2, UTF - 8: E2 8A A2"
     let tabs = Array.from({ length: node.depth - 1 }, () => ".  ").join("");
 
     let str = "";
-    if (!__.checkObject(node.data) && !__.checkArray(node.data)) {
+    if (!(__.checkObject(node.data) || __.checkArray(node.data))) {
         str = ": " + JSON.stringify(node.data);
     }
     

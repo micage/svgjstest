@@ -1,6 +1,16 @@
 import * as db from "../../DataBase/Table";
 import TableView from "../../DOM/TableView/TableView";
-import { mount } from "../../DOM/Elements";
+import { mount, Div } from "../../DOM/Elements";
+
+const doc = document.body;
+
+// Prerequisites
+// $: web_on  ; to run a local web-server
+// $: sql_on  ; optional, run a local mysql-server
+// $: httpv  ; optional, edit virtual host config
+// if sql is not running, testData will be used
+
+
 /**
  * first we need a database model:
  * it has to manage tables (create, modify, delete)
@@ -20,8 +30,17 @@ var testData = {
     ]
 };
 
+// address of our Web-API
 const url1 = "http://mmm-api.mmm/api";
 
+const addAssetsUser = () => {
+    let div = Div({});
+    let img = new Image();
+    img.src = "../assets/svg/Letter_A.svg";
+    // img.src = "../assets/svg/drawing.svg";
+    div.appendChild(img);
+    doc.appendChild(div);
+};
 
 db.loadTable({
     url: url1,
@@ -32,12 +51,15 @@ db.loadTable({
         let tv = TableView({
             data: tableData
         });
-        document.body.appendChild(tv);
+        doc.appendChild(tv);
+
+        addAssetsUser();
+
         mount(tv);
     }, 
     error => {
         console.log(error);
-        document.body.appendChild(TableView({
+        doc.appendChild(TableView({
             data: testData
         }));
     }

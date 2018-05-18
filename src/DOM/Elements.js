@@ -118,7 +118,7 @@ const setAttributes = (elem, attrs) => {
     });
 };
 
-const addListeners = (elem, listeners) => {
+export const addListeners = (elem, listeners) => {
     if (__DEBUG__) {
         if (!(elem instanceof Element)) throw("Elements: noelemde is not an Element");
         if (!__.checkObject(listeners)) throw("Elements: listeners is not an Object");

@@ -1,0 +1,55 @@
+@bgcolor: #304060;
+
+body {
+    margin: 0
+}
+
+#app {
+    position: "absolute"; top: 0; left: 0; width: "100%"; height: "100%";
+}
+
+.doc {
+    background-color: @bgcolor;
+}
+
+.button {
+    stroke: tomato;
+    fill: #d0d0d0;
+    stroke-width: 2;
+    width: 20px; 
+    height: 20px;
+    &:hover {
+        position: relative;
+        fill: orange;
+        top: -10px;
+    }
+}
+
+.draggable {
+    fill: @bgcolor;
+    .line {
+        stroke-width: 2px;
+        stroke: hsl(100, 70%, 85%);
+    }
+    .point {
+        cursor: move;
+        stroke: lime;
+    }
+    .cpoint {
+        cursor: move;
+        stroke: lightskyblue;
+    }
+}
+
+.path {
+    stroke: beige;
+    fill: none;
+    stroke-width: 2;
+    &:hover {
+        //stroke: orange;
+        cursor: url("/assets/path2.svg")2 2, auto;
+    }
+    &.selected {
+        cursor: default;
+    }
+}

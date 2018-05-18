@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 100 100"
+    width="32px" height="32px"
+><g stroke-width="7" fill="none">
+    <path d="M7,7 c60,0 0,80 40,80 s-40,-80 40,-50" stroke="gold"/>
+    <circle cx="7" cy="7" r="3" stroke="lime"/>
+    <circle cx="47" cy="87" r="3" stroke="lime"/>
+    <circle cx="87" cy="37" r="3" stroke="lime"/>
+</g></svg>

@@ -2,7 +2,8 @@ import * as __ from "../Util/ParamCheck";
 import {
     applyStyle,
     appendChildren,
-    addClasses
+    addClasses,
+    addListeners
 } from "../DOM/Elements";
 import Vector2 from "../Math/Vector2";
 
@@ -37,7 +38,12 @@ const Create = (args) => {
     if (args.class) addClasses(elem, args.class); delete args.class;
     if (args.style) applyStyle(elem, args.style); delete args.style;
     if (args.children) appendChildren(elem, args.children); delete args.children;
-    CopyProps(elem, args);
+    if (args.listeners) addListeners(elem, args.listeners); delete args.listeners;
+    if (args.transform) {
+        elem.setAttribute("transform", args.transform);
+        delete args.transform;
+    }
+    // CopyProps(elem, args);
 
     return elem;
 };
@@ -52,11 +58,6 @@ const SVG = (args) => {
 
     self.setAttribute('xmlns:xlink', svgLink);
     if (args.viewBox) self.setAttribute('viewBox', args.viewBox);
-
-    self.group = function(args) {
-        let g = Create(args);
-        return self.appendChild(g);
-    }
 
     return self;
 };
@@ -85,32 +86,32 @@ const Group = (args) => {
  *  - {string} className - CSS className
  */
 const Line = (args) => {
-    // check for p0
-    // check for p1
-    if(__DEBUG__) {
-        if (!__.checkObject(args)) args = {};
-        if (__.checkObject(args.p0) || __.checkObject(args.p1)) {
-            if (!__.checkObject(args.p0)) args.p0 = new Vector2();
-            if (!__.checkObject(args.p1)) args.p1 = new Vector2();
-        } else {
-            args.x1 = __.checkNumber(args.x1) ? args.x1 : 0;
-            args.y1 = __.checkNumber(args.y1) ? args.y1 : 0;
-            args.x2 = __.checkNumber(args.x2) ? args.x2 : 0;
-            args.y2 = __.checkNumber(args.y2) ? args.y2 : 0;
-        }
+    if (!__.checkObject(args)) {
+        console.warn("No arguments given for Line(...)");
+        args = {};
     }
-    let p0 = args.p0;
-    let p1 = args.p1;
-    delete args.p0;
-    delete args.p1;
-
+    if (__.checkArray(args.children)) {
+        console.warn("Children in SVGLineElement are not allowed.");
+        delete args.children; // no children allowed
+    }
+    
     args.Type = "line";
     let self = Create(args);
 
-    self.setAttribute("x1", p0.x);
-    self.setAttribute("y1", p0.y);
-    self.setAttribute("x2", p1.x);
-    self.setAttribute("y2", p1.y);
+    if (args.p0 && args.p0) {
+        self.setAttribute("x1", p0.x || 0);
+        self.setAttribute("y1", p0.y || 0);
+        self.setAttribute("x1", p1.x || 0);
+        self.setAttribute("y1", p1.y || 0);
+        delete args.p0;
+        delete args.p1;
+    }
+    else {
+        self.setAttribute("x1", args.x1);
+        self.setAttribute("y1", args.y1);
+        self.setAttribute("x2", args.x2);
+        self.setAttribute("y2", args.y2);
+    }
 
     return self;
 };
@@ -152,8 +153,14 @@ const PolyLine = (args) => {
 };
 
 const Circle = (args) => {
-    if (!__.checkObject(args)) args = {};
-    if (__.checkArray(args.children)) delete args.children; // no children allowed
+    if (!__.checkObject(args)) {
+        console.warn("No arguments given for Cirle(...)");
+        args = {};
+    }
+    if (__.checkArray(args.children)) {
+        console.warn("Children in SVGCircleElement are not allowed.");
+        delete args.children; // no children allowed
+    }
     
     args.Type = "circle";
     args.attr = ["cx", "cy", "r"]
@@ -168,8 +175,15 @@ const Circle = (args) => {
 };
 
 const Rect = (args) => {
-    if (!__.checkObject(args)) args = {};
-    if (__.checkArray(args.children)) delete args.children; // no children allowed
+    if (!__.checkObject(args)) {
+        console.warn("No arguments given for Rect(...)");
+        args = {};
+    }
+    if (__.checkArray(args.children)) {
+        console.warn("Children in SVGRectElement are not allowed.");
+        delete args.children; // no children allowed
+    }
+    
     
     args.Type = "rect";
     args.attr = ["x", "y", "rx", "ry", "width", "height"];
@@ -187,14 +201,20 @@ const Rect = (args) => {
 };
 
 const Path = (args) => {
-    if (!__.checkObject(args)) args = {};
-    if (__.checkArray(args.children)) delete args.children; // no children allowed
+    if (!__.checkObject(args)) {
+        console.warn("No arguments given for Path(...)");
+        args = {};
+    }
+    if (__.checkArray(args.children)) {
+        console.warn("Children in SVGPathElement are not allowed.");
+        delete args.children; // no children allowed
+    }
     
     args.Type = "path";
     args.attr = ["d", "transform"]
     let self = Create(args);
     
-    self.setAttribute("d", args.d || "m 10,10 l 20,20");
+    self.setAttribute("d", args.d || "M 10,10 L 20,20");
     if (args.transform) {
         self.setAttribute("transform", args.transform);
     }

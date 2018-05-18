@@ -1,10 +1,11 @@
-import * as SVG from "../svg/Elements";
 import Scene from "../Entities/Scene";
+import { SVG, Group, Circle, Rect, Path } from "../../SVG/Elements";
 /**
  * This renderer is creating SVGElements
- * These would be visible as soon as being created
+ * These are visible as soon as being created and persistent in the SVG-DOM
+ * So once created they remain visible in opposite to canvas elements
  * 
- * Should we create the SVG root ourselves? THen we would only need a parent DIV
+ * Should we create the SVG root ourselves? Then we would only need a parent DIV
  */
 
 class SVGRenderer {
@@ -21,6 +22,7 @@ class SVGRenderer {
     }
 
     /**
+     * A scene is a tree of frames (coordinate systems)
      * @param {Scene} scene
      */
     render(scene) {

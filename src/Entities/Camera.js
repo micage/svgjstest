@@ -1,33 +1,33 @@
-import Frame from "./Frame";
-import Vector3 from "../Math/Vector3";
-import Vector2 from "../Math/Vector2";
+const Frame = require("./Frame");
+const Vector3 = require("../Math/Vector3");
+const Vector2 = require("../Math/Vector2");
 
 /**
  * every Entity has a life cycle: init, update, destroy
  */
 
-class Camera {
-    constructor(params) {
-        if(__DEBUG__) {
-            if(!params) {
-                params = {};
-                console.warn("no camera params specified.");
-            }
+const Camera = function(params) {
+    params = params || {};
+    if(__DEBUG__) {
+        if(!params) {
+            console.warn("no camera params specified.");
         }
-        let frameParams = {
-            pos: params.pos || new Vector3(0, 8, 6),
-            at: params.at || new Vector3(),
-            d: params.d || 10
-        };
-        this.d = params.d > 1 ? params.d : 10; 
-        this.frame = new Frame(frameParams);
     }
+    let frameParams = {
+        pos: params.pos || new Vector3(0, 8, 6),
+        at: params.at || new Vector3(),
+        d: params.d || 10
+    };
+    this.d = params.d > 1 ? params.d : 10; 
+    this.frame = new Frame(frameParams);
+};
 
+Camera.prototype = {
     project(v) {
         // v.z should be clipped to <z.near, z.far>
         let s = this.d / (v.z);
         return new Vector2(v.x * s, v.y * s);
-    }
+    },
 
     /**
      * @param {Frame} frame - root frame of the hierarchy to be rendered
@@ -50,9 +50,8 @@ class Camera {
         });
 
     }
+};
 
-}
-
-export default Camera;
+module.exports = Camera;
 
 

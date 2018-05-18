@@ -1,5 +1,5 @@
-let test = {
-    theWord: "foo",
+let junk = {
+    foo: "bar",
     people: [
         { name: "Heinz", age: 42, hobbies: ["diving", "boulder", "cinema"] },
         { name: "Gabi", age: 22, hobbies: ["biking", "soccer"] },
@@ -8,6 +8,11 @@ let test = {
     job: {
         type: "IT",
         city: "Güntzelsau",
+    },
+    math: {
+        sqr: x => x * x,
+        sin: Math.sin,
+        myFun: "x^3-5y^2+1"
     },
     i1: {
         i11: {
@@ -30,6 +35,11 @@ let test = {
     i3: "i3 data"
 };
 
+let jj = {
+    ich: "Michael",
+    junk
+};
+
 
 let afterfx = {
     project: {
@@ -49,4 +59,5 @@ let afterfx = {
     }
 };
 
-export default test;
+// export default test;
+module.exports = { junk, afterfx, jj };

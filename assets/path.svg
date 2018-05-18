@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 100 100"
+  width="32px" height="32px"
+><g
+    stroke-width="7"
+    fill="none"
+  >
+    <path d="M10,7 C3,41 39,9 43,90 48,9 78,4 90,57" stroke="gold" />
+    <circle cx="10" cy="7" r="3" stroke="lime" />
+    <circle cx="43" cy="90" r="3" stroke="lime" />
+    <circle cx="90" cy="57" r="3" stroke="lime" />
+</g></svg>

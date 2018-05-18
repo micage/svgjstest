@@ -1,53 +1,68 @@
-class Vector2 {
-    constructor(x = 0, y = 0) {
-        this._x = x;
-        this._y = y;
-    }
 
-    get x() { return this._x; }
-    get y() { return this._y; }
 
+const Scalar = function(s) {
+    this.s = s;
+};
+
+
+
+
+const Vector2 = function(x, y) {
+    this.x = x;
+    this.y = y;
+};
+
+Vector2.prototype = {
     /** @return {number} quadrance of this */
-    get quad() {
-        return this._x * this._x + this._y * this._y;
-    }
+    quad() {
+        return this.x * this.x + this.y * this.y;
+    },
 
     /** @return {number} this in the opposite direciton */
-    get inv() {
-        return new Vector2(-this._x, -this._y);
-    }
+    inv()  {
+        return new Vector2(-this.x, -this.y);
+    },
+    invIP() {
+        this.x *= -1, this.y *= -1;
+    },
 
     /** @return {Vector2} a vector perpendicular to this */
-    get perp() {
-        return new Vector2(this._y, -this._x);
-    }
-
+    perp() {
+        return new Vector2(this.y, -this.x);
+    },
     /** @return {number} dot product of this with v */
     dot(v) {
-        return this._x * v._x + this._y * v._y;
-    }
+        return this.x * v.x + this.y * v.y;
+    },
 
     /** @return {Vector2} a vector perpendicular to this */
     plus(v) {
-        return new Vector2(this._x + v._x, this._y + v._y);
-    }
+        return new Vector2(this.x + v.x, this.y + v.y);
+    },
+    minus(v) {
+        return new Vector2(this.x - v.x, this.y - v.y);
+    },
     plusIP(v) {
-        this._x += v._x; this._y += v._y;
+        this.x += v.x; this.y += v.y;
         return this;
-    }
+    },
+    minusIP(v) {
+        this.x -= v.x; this.y -= v.y;
+        return this;
+    },
 
     /** @return {Vector2} */
     scale(s) {
-        return new Vector2(this._x * s, this._y * s);
-    }
+        return new Vector2(this.x * s, this.y * s);
+    },
     scaleIP(s) {
-        this._x *= s; this._y *= s;
+        this.x *= s; this.y *= s;
         return this;
-    }
+    },
 
     /** @param {number} w - angle */
     /** @param {boolean} deg - if true units of w are degree, else radians */
-    /** @return {Vector2} - this rotated by angle w */
+    /** @return {Vector2} - this vector rotated by angle w */
     rotate(w, deg) {
         if (deg === true) {
             w *= (Math.PI / 180);
@@ -55,10 +70,10 @@ class Vector2 {
         let c = Math.cos(w);
         let s = Math.sin(w);
         return new Vector2(
-            this._x * c - this._y * s,
-            this._x * s + this._y * c
+            this.x * c - this.y * s,
+            this.x * s + this.y * c
         );
-    }
+    },
 
     /** Splits this into components with respect to v,
      *  one perpendicular to v and one collinear with v
@@ -66,27 +81,30 @@ class Vector2 {
      * @return {{Vector2}, {Vector2}} a vector perpendicular to this.v
      */
     split(v) {
-        let k = this.dot(v) / v.dot(v);
+        let k = this.dot(v) / v.quad();
         let b = v.scale(k);
         return {
             coll: b,
-            perp: this.translate(b.inv)
+            perp: this.plus(b.inv)
         };
-    }
+    },
 
     /**
      * mirrors v with respect to this
      */
     mirror(v) {
-        return v.translate(v.split(this).perp.scale(2).inv);
-    }
+        // return v.plus(v.split(this).perp.scale(2).inv());
+        let n = this.scale(2 * this.dot(v) / this.quad());
+        return n.minus(v);
+    },
 
     /** @return {string}  */
     /** @param {string} name of the vector */
-    toString(v_name) {
-        return `${v_name} = (${this._x.toFixed(2)}, ${this._y.toFixed(2)})`;
+    toString() {
+        return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`;
     }
 
-}
+};
 
-export default Vector2;
+
+module.exports = Vector2;

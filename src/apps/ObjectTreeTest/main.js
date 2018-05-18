@@ -1,24 +1,28 @@
-import ObjectTree from "../../Structures/ObjectTree";
-import data from "../../Structures/TreeTestData";
-import * as __ from "../../Util/ParamCheck";
+// import ObjectTree from "../../Structures/ObjectTree";
+// import data from "../../Structures/TreeTestData";
+// import * as __ from "../../Util/ParamCheck";
 
-let tree = new ObjectTree("test", data);
+global.__DEBUG__ = true;
+const ObjectTree = require("../../Structures/ObjectTree");
+const data = require("../../Structures/TreeTestData");
+const __ = require("../../Util/ParamCheck");
+
 
 const print = (node) => {
     let tabs = Array.from({ length: node.depth - 1 }, () => ".  ").join("");
 
     let str = "";
     if (!__.checkObject(node.data) && !__.checkArray(node.data)) {
-        str = ` ${JSON.stringify(node.data)}`;
+        str = `${JSON.stringify(node.data)}`;
     }
 
-    console.log(`${tabs}${node.id} <${node.depth}> ${str}`);
+    console.log(`${tabs}${node.id}: ${str}`);
 
     //return true;
 };
 
 const findNode = (name) => {
-    let foundNode = { id: "not found" };
+    let foundNode = null;
 
     const find = (node) => {
         if (node.id === name) {
@@ -37,31 +41,39 @@ const findNode = (name) => {
     return foundNode;
 };
 
-if (0) {
-    let nodeName = "i12";
 
-    console.log("found node method 1:");
-    console.log(findNode(nodeName));
 
-    console.log("found node method 2:");
-    console.log(tree.find(nodeName));
-}
+let tree = new ObjectTree("junk", data.junk);
 
-let ot = tree.getChild("i1");
-console.log(ot);
+//==========================================
+console.log('---- tree.getChild("job") ----');
+tree.getChild("i1").traverse(print);
+console.log('\n');
 
-let job = tree.getChild("job");
-console.log(job);
+//==========================================
+console.log('---- node.setChild ----');
+let i112 = tree.getNode("i1/i11/i112");
+i112.setChild("jungle", {
+    ich: "Tarzan",
+    du: "Jane"
+});
+i112.traverse(print);
+console.log('');
 
-let ot2 = tree.getNode("i1/i11/i112");
-console.log(ot2);
+//==========================================
+console.log('---- tree.deleteChild("i1") ----');
+tree.deleteChild("i1");
+tree.traverse(print);
+console.log('');
 
-ot2.setChild("job", job.getObject());
-console.log(ot2);
-ot2.traverse(print);
+//==========================================
+console.log(`tree.key: ${tree.key}\n`);
 
-// console.log("node, <depth>, data (if no children)");
-// tree.traverse(print);
+//==========================================
+console.log(`---- ${i112.key}.setChild("x", Math.PI)`);
+i112.setChild("x", Math.PI);
+i112.traverse(print);
+console.log('');
 
 
 // =================================================================

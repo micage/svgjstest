@@ -6,7 +6,7 @@ import * as svg from "../svg/Elements";
 const gStyle = {
     "fill": "orange",
     "stroke": "black",
-    "stroke-width": "3"
+    "stroke-width": "1"
 };
 
 
