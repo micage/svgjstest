@@ -1,13 +1,4 @@
 /**
- @typedef FrameParamType
- @type {Object}
- @property {number} x
- @property {number} y
- @property {number} scale
- @property {number} angle
- */
-
-/**
  @typedef FrameInfoType
  @type {Object}
  @property {boolean} doContinue
@@ -17,8 +8,7 @@
  */
 
 /**
- @typedef FrameVisitorType
- @callback
+ @callback FrameVisitorType
  @param {Frame2D} frame
  @param {FrameInfoType} info
  @returns {boolean}
@@ -30,6 +20,11 @@
  @returns {boolean}
  */
 
+if (!Number.equals) {
+    Number.equals = function (a, b) {
+        return Math.abs(a - b) < Number.EPSILON;
+    };
+}
 
 const PI_OVER_180 = Math.PI / 180;
 
@@ -40,21 +35,28 @@ const DefaultParams = {
     angle: 0
 };
 
+let instances = 0;
+
 /**
- * @class
- * @param params {FrameParamType}
+ * @constructor
+ * @param {Object} params
+ * @param {number} params.x
+ * @param {number} params.y
+ * @param {number} params.scale
+ * @param {number} params.angle
  */
-const Frame2D  = function(params) {
+const Frame2D = function(params) {
+    instances++;
     let pp = Object.assign({}, DefaultParams, params || {});
-    this._name = "";
+    this._name = pp.name || ("fr"+instances);
     this._x = pp.x;
     this._y = pp.y;
-    this._s = Number.equals(pp.scale, 0) ? 1e-7 : pp.scale;
+    this._s = Number.equals(pp.scale, 0) ? Number.EPSILON : pp.scale;
     this._angle = pp.angle;
     this._parent = null;
     this._children = [];
     this._items = [];
-}
+};
 
 Frame2D.prototype = {
     /** @return {string} */
@@ -73,7 +75,7 @@ Frame2D.prototype = {
     /** @param {number} s the new scale */
     set scale(s) { Number.equals(s, 0) ? this._s = 1e7 : this._s = s; },
 
-    /** @returns {number} */
+    /** @return {number} */
     getRootScale() {
         let s = this._s, parent = this._parent;
         while (parent) {
@@ -83,7 +85,7 @@ Frame2D.prototype = {
         return s;
     },
 
-    /** @returns {{ x: number, y: number }} */
+    /** @return {{ x: number, y: number }} */
     getPosition() {
         return { x: this._x, y: this._y };
     },
@@ -187,7 +189,7 @@ Frame2D.prototype = {
      */
     traverse(visitor, doVisitRoot = true) {
 
-        let infoInfoType = {
+        let info = {
             depth: 0,
             doContinue: true,
             isLastChild: true,
@@ -198,7 +200,7 @@ Frame2D.prototype = {
             visitor(this, info);
         }
 
-        this._preOrder(visitor, info).bind(this);
+        _preOrder.bind(this)(visitor, info);
     },
 
     addItem(item) {
@@ -253,19 +255,20 @@ Frame2D.prototype = {
 /**
  * @param {FrameVisitorType} visitor
  * @param {FrameInfoType} info
+ * @private
  */
 const _preOrder = function(visitor, info) {
     for(var i = 0; i < this._children.length; i++) {
         if(info.bContinue !== false) {
             let frame = this._children[i];
 
-            info.bIsLast = i === this._children.length - 1 ? true : false;
+            info.bIsLast = (i === this._children.length - 1);
             info.bHasChildren = frame.hasChildren();
             info.bContinue = visitor(frame, info);
 
             if (info.bHasChildren) {
                 info.depth++;
-                frame.preOrder(visitor, info);
+                _preOrder.bind(frame)(visitor, info);
                 info.depth--;
             }
         }

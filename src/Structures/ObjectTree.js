@@ -1,7 +1,15 @@
 "use strict";
 const __ = require("../Util/ParamCheck");
 
+/**
+ * @type {Object}
+ * @property {boolean} dc
+ */
+let bbb = { dc: true };
+
 /** A recursively called function that traverses the hierarchy of a javascript object
+ * TODO: this is really ugly ... but works
+ * Do not forget to reset bbb.dc!!!
  * @param {Object} obj - the object to traverse
  * @param {TreeVisitor} cb - a callback function that is called for each currently visited node
  * @param {Object} nodeInfo - a structure that provides the callback with info about the currently visited node
@@ -13,12 +21,6 @@ const __ = require("../Util/ParamCheck");
  * @param {number} nodeInfo.depth - integer that equals the recursion depth
  */
 
-let bbb = { dc: true };
-
-/**
- * TODO: this is really ugly ... but works
- * Do not forget to reset bbb.dc!!!
- */
 const _preOrder = function (obj, cb, nodeInfo) {
     if (!obj || typeof obj !== "object") return;
 

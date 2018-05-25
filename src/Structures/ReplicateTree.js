@@ -1,8 +1,8 @@
-import * as __ from "../Util/ParamCheck";
-import ObjectTree from "./ObjectTree";
+const __ = require("../Util/ParamCheck");
+const ObjectTree = require("./ObjectTree");
 
 if (__DEBUG__) {
-    var NodePrinter = require("./ObjectTree").NodePrinter;
+    var NodePrinter = ObjectTree.NodePrinter;
 
     function createNode(parent, nodeInfo) {
         // 'parent' is just an object here, so we just add a key and set its value.
@@ -19,18 +19,20 @@ if (__DEBUG__) {
 
 /**
   @typedef NodeInfo
-  @type {object}
+  @type {Object}
   @property {string} id
   @property {boolean} hasChildren
   @property {boolean} isLastChild
+  @property {*} data
  */
 
- // CAUTION - this usus a pre-order traveral
+ // CAUTION - this uses a pre-order traveral
 
 /**
- * @callback CreateNodeCb
+ * @typedef CreateNodeCb
+ * @type {Function}
  * @param { Node } parent - if !parent, create root, Node can be anything
- * @param { NodeInfo } childNodeInfo - if !parent this isn't used
+ * @param { NodeInfo } childNodeInfo - if no parent this isn't used
  * @return { Node }
  * Note that you have not to care about tree structure here
  * all that is left to do is to create a Node from NodeInfo.
@@ -41,40 +43,40 @@ if (__DEBUG__) {
  */
 
 /**
- * @callback SkipNodeCB
+ * @typedef SkipNodeCb
+ * @type {Function}
  * @param { Node } node - currently tested node
  * @return { boolean } - if true, node and its descendants are skipped
  */
 
 /**
- * @callback TraverseFunc
- * @param { NodeInfo } node - currently traversed node
- * @return { boolean } - if false, traversal is stopped
+ * @typedef TraverseFuncPovider
+ * @type {Object}
+ * @property {(treeNode: *) => boolean } traverse
  */
 
 /**
-  @typedef ReplicateTreeArgs
-  @type {object}
-  @property {CreateNodeCb} createNode - creates a node and adds it to parent.
-  @property {SkipNodeCB} skipNode - your name.
-  @property {TraverseFunc} traverse - your age.
+  * @typedef ReplicateTreeArgs
+  * @type {Object}
+  * @property {CreateNodeCb} createNode - creates a node and adds it to parent.
+  * @property {SkipNodeCb} skipNode
+  * @property {TraverseFuncPovider} container
  */
 
 /**
- * @param {ReplicateTreeArgs}
- * @return {object}
+ * @param {ReplicateTreeArgs} args
+ * @return {Object}
  */
-export default
 function ReplicateTree(args) {
     if (__DEBUG__) {
         if (!__.checkObject(args)) {
-            return console.error("ReplicateTree: no argument provided.")
+            return { error: "ReplicateTree: no argument provided." };
         }
         if (!__.checkObject(args.container)) {
-            return console.error("ReplicateTree: no container provided.")
+            return { error: "ReplicateTree: no container provided." };
         }
         if (typeof args.createNode !== "function") {
-            return console.error("ReplicateTree: no createNode function provided.")
+            return { error: "ReplicateTree: no createNode function provided." };
         }
     }
 
@@ -90,6 +92,10 @@ function ReplicateTree(args) {
     var skipAncestors = [];
     var skipMode = false;
 
+    /** decides wether or not to skip a node given by nodeInfo
+     * @param { NodeInfo } nodeInfo
+     * @return { boolean }
+     */
     function skipNode(nodeInfo) {
 
         if (nodeInfo.hasChildren) {
@@ -105,7 +111,10 @@ function ReplicateTree(args) {
         }
     }
 
-    // visits traversable
+    /** visits traversable
+     * @param { NodeInfo } nodeInfo
+     * @return { boolean }
+     */
     function onNode(nodeInfo) {
 
         // How to rewrite that? Looks strange, but works.
@@ -148,3 +157,4 @@ function ReplicateTree(args) {
     return root;
 }
 
+module.exports = { ReplicateTree };
