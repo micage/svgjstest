@@ -4,12 +4,13 @@ import Frame from "../../Entities/Frame";
 import Camera from "../../Entities/Camera";
 import Scene from "../../Entities/Scene";
 import { PathEntity, Vertex } from "../../Entities/PathEntity";
+import Renderer from "../../Renderer/CanvasRenderer";
 
 import * as DOM from "../../DOM/Elements";
 import * as Evt from "../../DOM/Events";
 import ScrollBar from "../../DOM/ScrollBar";
 import * as Obs from "../../Structures/Observable";
-// import SVG from "svg.js";
+import { SVG, Group, Circle, Rect, Path, Line, PolyLine } from "../../svg/Elements.js";
 
 // ======================================================================
 // test svg.js
@@ -20,7 +21,8 @@ let views = {
 
 let G = {
     scene: null,
-    g1_id: DOM.genId()
+    g1_id: DOM.genId(),
+    R: null // has to know it's parent HTMLElement
 };
 
 // observables

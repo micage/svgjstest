@@ -98,7 +98,7 @@ const Line = (args) => {
     args.Type = "line";
     let self = Create(args);
 
-    if (args.p0 && args.p0) {
+    if (args.p0 && args.p1) {
         self.setAttribute("x1", p0.x || 0);
         self.setAttribute("y1", p0.y || 0);
         self.setAttribute("x1", p1.x || 0);
