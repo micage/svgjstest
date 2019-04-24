@@ -1,2 +1,3 @@
-Es ist erstmal nicht so offentsichtlich, dass die Erzeugung eines Vektorraumes die automatische Miterzeugung eines weiteren bedingt
-(der Dualraum).
+Es ist erstmal nicht so offentsichtlich, dass die Erzeugung eines Vektorraumes V die automatische Miterzeugung eines weiteren bedingt
+Die Menge der linearen Abbildungen eines Vektors auf einen anderen ist nämlich auch ein Vektorraum, der duale Raum V*.
+Die Menge der linearen Abbidlungen eines Elements von V* ist wieder in V. V und V* bilden sozusagen ein untrennbares symetrisches Paar.
