@@ -4,8 +4,7 @@ The project title is a little misleading, reason is it started as a test for
 SVG-Components and a tool to visualize mathematical problems (2D, 3D, time).
 Later I decided to want a scenegraph (tree -> tree-view) for it.
 
-Look inside [package.json](https://github.com/micage/svgjstest/blob/master/package.json) -> scripts to 
-see what you can do. At the moment it's dealing mostly with tree structures,
+At the moment it's dealing mostly with tree structures,
 tree-views, table-views and database abstraction. Later this will become the backbone of all my apps.
 
 The central idea behind it all is: Apps are managing trees of data.
@@ -15,13 +14,14 @@ Also I want to do it in a component-, interface-oriented way.
 At the end you get a tree of components where each component is managing it's part of the apps' data tree.
 
 Each component is also associated with a database table. Each instance of a component becomes a row and public properties of the component are the columns in this table. Syncing data between the app and the database is a user decision.
-E.g. via a save button. You can also load and save partially.
+E.g. via a save button. Loading and saving data component-wise should also work.
 
-What is a component (module could be used interchangably)?
-In Javascript it's sadly just a normal object. There is no barrier, no encapsulation. You can read, write, modify values or even change the structure of any object. This is total freedom. Sounds good, but leads to total mess in
-a world of shared code bases. So one way to avoid this is to agree on conventions.
-The other would be to use a different language (No joke). Nowadays everyone knows
-that e.g. changing the prototype of shared objects or even JS built-in objects is a really bad idea. Although no one could hold you back from doing it.
+What is a component (the term module could be used interchangably)?
+In Javascript it's sadly just a normal object. There is no barrier, no encapsulation. You can read, write, modify values 
+or even change the structure of any object. This is total freedom. Sounds good, but leads to total mess in a world of 
+shared code bases. So one way to avoid this is to agree on conventions.
+The other would be to use a different language (no joke!). Nowadays everyone knows that e.g. changing the prototype of 
+shared objects or even JS built-in objects is a really bad idea. Although no one could hold you back from doing it.
 
 You get a component by calling a factory function, e.g.:
 ```
