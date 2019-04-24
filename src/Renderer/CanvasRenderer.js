@@ -11,22 +11,70 @@
  */
 
 /**
- * the CanvasRenderer is a HTMLCanvasElement2d
+ * the CanvasRenderer is a Canvas​Rendering​Context2D or holds one: renderer.dom
+ * 
+ * 
  */
 
-const CanvasRenderer  = function() {
+// set fill color
+// set stroke color
+// set stroke width
 
-    drawLine(_from, _to) {
+
+/** @type {HTMLCanvasElement} */
+let cvs = null;
+
+/** @type {Canvas​Rendering​Context2D} */
+let ctx = null;
+
+
+/**
+ * 
+ * @param {HTMLElement} _parent 
+ */
+const Create = function() {
+    if (!cvs) {
+        cvs = document.createElement("canvas");
+        ctx = cvs.getContext('2d');
+        cvs.style.width = "100%"
+        cvs.style.height = "100%"
+    }
+
+    return {
+        dom: cvs, 
         
+        ctx,
+
+        clear() {
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+        },
+
+        setStyle(_style) {
+            Object.assign(ctx, _style);
+        },
+
+        line(_from, _to) {
+            ctx.beginPath();
+            ctx.moveTo(_from.x, _from.y);
+            ctx.lineTo(_to.x, _to.y);
+            ctx.closePath();
+            ctx.stroke();
+        },
+
+        rect(x, y, w, h, filled) {
+            filled ? ctx.fillRect(x, y, w, h) : ctx.fillRect(x, y, w, h);
+        },
+
+        circle(x, y, r, filled) {
+            ctx.arc(x, y, r, 0, Math.PI * 2, true);
+            filled ? ctx.fill() : ctx.stroke();
+        }
     }
+};
 
-    setStyle() {
+// Note: after creation canvas width and heigt aren't valid yet.
+// after appending it to it's parent it is (reason: 100% style)
 
-    }
 
-    drawBox() {
-
-    }
-}
-
-export default CanvasRenderer;
+module.exports = Create();
+// export default CanvasRenderer;
