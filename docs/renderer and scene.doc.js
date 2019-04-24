@@ -37,7 +37,7 @@ doubling of memory footprint.
 In case of the Canvas API things are more straight. The renderer implementation
 does not need to hold any data. Just converting general draw calls to the
 canvas version of it. For example draw line from A to B would be:
-    ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); 
+    ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();  
 
 Renderer:
     - knows about pixels, colors
