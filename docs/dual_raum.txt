@@ -1,10 +1,2 @@
 Es ist erstmal nicht so offentsichtlich, dass die Erzeugung eines Vektorraumes die automatische Miterzeugung eines weiteren bedingt
 (der Dualraum).
-
-Die Grossen hören auf zu herrschen, wenn die Kleinen aufhören zu kriechen
-- Friedrich Schiller
-
-Bernd Senf
-Paul Schreyer
-Prof. Rainer Mausfeld
-Daniele Ganser
