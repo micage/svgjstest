@@ -13,7 +13,7 @@ a scene, how should they communicate?
 DirectX knows nothing about any game that uses it. This direction is obviuos.
 Can we make the other direction work, too? A scene that can be rendered by
 different renderers. Pluggable. A 3d scene renderered as ASCII letter salad?
-Not that would be very useful but in principle it should work.
+Not that this would be very useful but in principle it should work.
 
 As a guide a scene should not need any data from the renderer. The communication
 is only from the scene to the renderer not vice versa.
@@ -27,6 +27,17 @@ have it twice. One in system memory and one in fast GPU memory.
 In a game you wouldn't need the system memory copy anymore so you could free 
 it's memory. In a 3d-editing program with hardware acceleration you would 
 keep both copies.
+
+In case of SVG we would have a similar situation. Vertex data is stored e.g. in
+a path description but also in our scene. We could feed the SVG DOM with data
+and throw away our scenes' version if we intend to leave the object unchanged.
+But in general it seems to be a good idea to have both copies. Drawback is a
+doubling of memory footprint.
+
+In case of the Canvas API things are more straight. The renderer implementation
+does not need to hold any data. Just converting general draw calls to the
+canvas version of it. For example draw line from A to B would be:
+    ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); 
 
 Renderer:
     - knows about pixels, colors
@@ -94,17 +105,6 @@ Scene:
     - a tree of coordinate frames with attached geometric elements
     - should be independent of a renderer (how it' drawn)
     - scene elements are lines, rectangles, circles (arcs), pathes 
-
-
-
-
-
-
-
-
-
-
-
 
 
 */
