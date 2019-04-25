@@ -22,14 +22,23 @@ Scene.prototype = {
         return this.camaras.current;
     },
 
-    addEntity(ent) {
-        this.entities[ent.name] = ent;
+    addEntity(name, ent) {
+        this.entities[name] = ent;
     },
 
     traverse(func) {
         this.root.traverse(func);
     },
 
+    render(R, t){
+        R.clear();
+        R.setStyle({
+            lineWidth: 2,
+            fillStyle: "#00ff00",
+            strokeStyle: "#005588",
+        });
+        R.line({x: 0, y: 0}, {x: 400, y: t * 10 + 100});
+    }
 };
 
 module.exports = Scene;
