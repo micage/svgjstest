@@ -27,10 +27,17 @@ let cvs = null;
 /** @type {Canvas​Rendering​Context2D} */
 let ctx = null;
 
+/**
+ * @typedef CanvasRenderer
+ * @type {object}
+ * @property {HTMLCanvasElement} dom - a canvas element.
+ * @property {Canvas​Rendering​Context2D} ctx - the corresponding 2d context.
+ * @property {function} clear - clears the canvass
+ */
+
 
 /**
- * 
- * @param {HTMLElement} _parent 
+ * @returns {CanvasRenderer}
  */
 const Create = function() {
     if (!cvs) {
@@ -41,9 +48,8 @@ const Create = function() {
     }
 
     return {
-        dom: cvs, 
-        
-        ctx,
+        get dom() { return cvs; },        
+        get ctx() { return ctx; },
 
         clear() {
             ctx.clearRect(0, 0, cvs.width, cvs.height);
