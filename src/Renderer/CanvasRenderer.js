@@ -31,7 +31,7 @@ let ctx = null;
  * @typedef CanvasRenderer
  * @type {object}
  * @property {HTMLCanvasElement} dom - a canvas element.
- * @property {Canvas​Rendering​Context2D} ctx - the corresponding 2d context.
+ * @property {CanvasRenderingContext2D} ctx - the corresponding 2d context.
  * @property {function} clear - clears the canvass
  */
 
