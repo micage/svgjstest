@@ -14,15 +14,16 @@ import { SVG, Group, Circle, Rect, Path, Line, PolyLine } from "../../svg/Elemen
 
 // ======================================================================
 // test svg.js
-let views = {
+let V = {
     scrollBar: null,
     svg: null,
+    cvsWrapper: null,
+    Renderer
 };
 
-let G = {
+let M = {
     scene: null,
     g1_id: DOM.genId(),
-    R: null // has to know it's parent HTMLElement
 };
 
 // observables
@@ -31,8 +32,8 @@ let obs = {
 };
 
 obs.k1.addListener(function() {
-    G.scene.draw(this.value);
-    Evt.trigger(views.scrollBar, "mgRatioDo", this.getRatio());
+    draw(M.scene, this.value);
+    Evt.trigger(V.scrollBar, "mgRatioDo", this.getRatio());
 });
 
 const textStyle = {
@@ -48,13 +49,14 @@ DOM.App(
             font: "12pt sans-serif"
         },
         children: [
-            DOM.Div({
+            V.cvsWrapper = DOM.Div({
                 id: "scene", 
                 style: {
                     "height": "400px"
                 },
                 children: [
-                    SVG({
+                    V.Renderer.dom
+/*                     SVG({
                         style: {
                             width: "100%",
                             height: "100%"
@@ -67,13 +69,13 @@ DOM.App(
                             }
                         })]
                     })
-                ]
+ */                ]
             }),
             DOM.Span({ 
                 text: "Vector2 Test - scroll and watch! Guess what's going on?", 
                 style: textStyle
             }),
-            views.scrollBar = ScrollBar({
+            V.scrollBar = ScrollBar({
                 style: {
                     "width": "400px", 
                     "height": "20px", 
@@ -101,8 +103,11 @@ DOM.App(
 );
 
 function OnAppMounted() {
-    let g1 = document.getElementById(G.g1_id);
-    G.scene = createScene(g1);
+    M.scene = createScene();
+    
+    V.Renderer.dom.width = V.cvsWrapper.clientWidth;
+    V.Renderer.dom.height = V.cvsWrapper.clientHeight;
+    V.Renderer.ctx.clearRect(0,0, V.cvsWrapper.clientWidth, V.cvsWrapper.clientHeight);
     
     obs.k1.value = -2; // this triggers the listener
 }
@@ -113,24 +118,30 @@ const createScene = () => {
     scene.camera.at = new Vector3(10, 6, 0);
 
     let p1 = new PathEntity({
-        color: "dfdf30"
+        color: "#dfdf30"
     });
     p1.addVertex({ x: 1, y: 2 });
     p1.addVertex({ x: 2, y: 2, z: 3 });
     p1.addVertex({ x: 2, y: 2, z: 7 });
 
-    self.draw = function(k) {
-        let ang = k / 10 * Math.PI;
-        let R = 12;
-        scene.camera.pos = new Vector3(R * Math.cos(ang), 6, R * Math.sin(ang));
+    scene.addEntity("p1", p1);
 
-        renderer.render(scene);
-
-    };
-
-    return self;
+    return scene;
 };
 
+/**
+ * 
+ * @param {Scene} scene 
+ * @param {Number} k 
+ */
+function draw(scene, k) {
+    let ang = k / 10 * Math.PI;
+    let r = 12;
+    scene.camera.pos = new Vector3(r * Math.cos(ang), 6, r * Math.sin(ang));
+
+    scene.render(V.Renderer, k);
+
+}
 
 
 // =================================================================
