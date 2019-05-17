@@ -1,16 +1,15 @@
-import Vector2 from "../../Math/Vector2";
+// import Vector2 from "../../Math/Vector2";
 import Vector3 from "../../Math/Vector3";
-import Frame from "../../Entities/Frame";
-import Camera from "../../Entities/Camera";
-import Scene from "../../Entities/Scene";
-import { PathEntity, Vertex } from "../../Entities/PathEntity";
+// import Frame from "../../Entities/Frame";
+// import Camera from "../../Entities/Camera";
+import Scene from "../../Scene/Scene";
+import { Path } from "../../Scene/Path";
 import Renderer from "../../Renderer/CanvasRenderer";
 
 import * as DOM from "../../DOM/Elements";
 import * as Evt from "../../DOM/Events";
 import ScrollBar from "../../DOM/ScrollBar";
 import * as Obs from "../../Structures/Observable";
-import { SVG, Group, Circle, Rect, Path, Line, PolyLine } from "../../svg/Elements.js";
 
 // ======================================================================
 // test svg.js
@@ -115,16 +114,16 @@ function OnAppMounted() {
 const createScene = () => {
     let scene = new Scene();
 
-    scene.camera.at = new Vector3(10, 6, 0);
+    let cam = scene.getCamera();
 
-    let p1 = new PathEntity({
-        color: "#dfdf30"
+    let path1 = new Path({
+        name: "p1"
     });
-    p1.addVertex({ x: 1, y: 2 });
-    p1.addVertex({ x: 2, y: 2, z: 3 });
-    p1.addVertex({ x: 2, y: 2, z: 7 });
+    path1.addVertex({ x: 1, y: 2 });
+    path1.addVertex({ x: 2, y: 2, z: 3 });
+    path1.addVertex({ x: 2, y: 2, z: 7 });
 
-    scene.addEntity("p1", p1);
+    scene.root.addEntity(path1);
 
     return scene;
 };
@@ -135,12 +134,8 @@ const createScene = () => {
  * @param {Number} k 
  */
 function draw(scene, k) {
-    let ang = k / 10 * Math.PI;
-    let r = 12;
-    scene.camera.pos = new Vector3(r * Math.cos(ang), 6, r * Math.sin(ang));
-
-    scene.render(V.Renderer, k);
-
+    scene.update(k, 0); // (t, dt)
+    scene.render(V.Renderer);
 }
 
 

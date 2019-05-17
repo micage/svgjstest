@@ -8,13 +8,10 @@
 const IEntity = function() {};
 
 IEntity.prototype = {
-    init() {},
-    update(t, dt) {},
-    destroy() {},
-
-    get frame() { return null; },
-    get lines() { return null; },
-    get pathes() { return null; },
+    getName() { debugger; },
+    getFrame() { debugger; return null; },
+    update(frame, t, dt) { debugger },
+    render(frame, renderer) { debugger },
 };
 
 module.exports = IEntity;
